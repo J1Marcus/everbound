@@ -70,7 +70,7 @@ Define required APIs without implementation details:
 5. **Performance Targets**: Response time and throughput requirements
 6. **Security Constraints**: Authentication, authorization, and data protection
 
-### Step 4: Data Model Requirements (10-15 min)
+### Step 4: Data Schema Requirements (10-15 min)
 
 Specify data persistence needs:
 

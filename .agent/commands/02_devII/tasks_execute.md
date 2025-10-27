@@ -1,299 +1,224 @@
 # Quick Tasks Executor — Streamlined Task Execution Service
 
 ## VARIABLES
-{{FILE}}: If no file is provided use `ai_docs/tasks/tasks_list.md` as {{FILE}}. {{FILE_DIRECTORY}}. The directory of {{FILE}}. 
+{{FILE}}: If no file is provided use `ai_docs/tasks/tasks_list.md` as {{FILE}}.
+{{FILE_DIRECTORY}} is the directory of {{FILE}}.
 
-## ROLE
-You are the **Quick Tasks Executor** responsible for executing **ALL** tasks from {{FILE}}. Your role is to efficiently complete **EVERY SINGLE TASK** in the list using established patterns and ensuring consistency with project documentation.
+## CORE PRINCIPLES
 
-## ⚠️ CRITICAL EXECUTION MANDATE ⚠️
+**YOU MUST IMPLEMENT EXISTING TASKS - DO NOT GENERATE NEW ONES**
 
-**YOU MUST IMPLEMENT THE EXISTING TASKS - DO NOT GENERATE NEW ONES**
-
-- **READ THE EXISTING TASK LIST** from {{FILE}} - these are pre-defined tasks that need implementation
-- **DO NOT CREATE NEW TASKS** - implement the tasks that are already documented in the file
-- **DO NOT STOP** after completing only a few tasks
-- **DO NOT ASSUME** the work is done until the entire task list is processed
-- **CONTINUE EXECUTION** through the complete task list systematically
-- **ONLY STOP** when all tasks are completed, blocked, or explicitly documented as unable to proceed
-
-**CRITICAL: You are implementing pre-existing tasks, not creating new ones. The tasks are already defined in {{FILE}}.**
+- **Read & Implement**: Process ALL pre-defined tasks from {{FILE}}
+- **Pattern-Based**: Use established codebase patterns consistently  
+- **Complete Execution**: Process EVERY task group systematically
+- **Document Outcomes**: Track progress and results comprehensively
 
 ---
 
-## Execution Strategy
+## EXECUTION WORKFLOW
 
-### Git State
-- Ensure current code is pushed to origin prior to beginning task implmentation
+### 1. Context Analysis (MANDATORY FIRST STEP)
+```bash
+# Use codebase_search FIRST for any new code exploration
+codebase_search("task-related functionality patterns")
 
-### Mode Management
-
-- **Start in Code Mode**: Begin execution in code mode for implementation
-- **Switch to Orchestrator**: For multi-step (non-atomic) tasks, switch to orchestrator mode
-- **Return to Code Mode**: After orchestrator delegation, return to code mode for continued execution
-
-### Pattern Recognition Protocol
-
-1. **Gather Relevant Data**: Understand the issue and requirements thoroughly
-2. **Identify Established Patterns**: Look for existing implementations in the codebase
-3. **Use Adjacent Patterns**: If no established patterns exist, find similar implementations
-4. **Ensure Consistency**: Validate against `docs/prd.md` and `docs/add.md`
-
----
-
-## Your Responsibilities
-
-### 1. Context Gathering and Analysis
-
-**BEFORE** starting any task, you MUST:
-
-- **Read the Existing Task File**: Examine {{FILE}} for the complete PRE-DEFINED task list
-- **DO NOT CREATE NEW TASKS**: The tasks are already written and documented in {{FILE}}
-- **Implement What Exists**: Your job is to implement the tasks that are already defined, not generate new ones
-- **Analyze Current State**: Use codebase search to understand existing implementations
-- **Identify Dependencies**: Determine what foundational work exists
-- **Extract Patterns**: Find established or adjacent patterns for implementation
-- **Review Progress**: Check `{{FILE_DIRECTORY}}/outcome.md` for current progress
-
-**CRITICAL REMINDER**: You are implementing pre-existing, documented tasks from {{FILE}}, not creating new tasks.
-
-### 2. Task Execution Protocol
-
-For each task in the quick tasks list:
-
-#### Step 1: Task Analysis
-
-- Read and understand the specific task requirements
-- Identify if the task is atomic (single-step) or multi-step
-- Determine required patterns and dependencies
-
-#### Step 2: Pattern Recognition
-
-- **Search for Established Patterns**: Use `codebase_search` to find existing implementations
-- **Identify Adjacent Patterns**: If no direct patterns exist, find similar functionality
-- **Validate Consistency**: Ensure approach aligns with `docs/prd.md` and `docs/add.md`
-
-#### Step 3: Implementation Strategy
-
-- **Atomic Tasks**: Implement directly in code mode
-- **Multi-Step Tasks**: Switch to orchestrator mode and create atomic subtasks
-- **Complex Tasks**: Break down into manageable components
-
-#### Step 4: Execution
-
-- Implement the task using identified patterns
-- Ensure code quality and consistency
-- Validate functionality works correctly
-
-#### Step 5: Outcome Tracking
-
-- Document what was accomplished
-- Note any errors or problems encountered
-- Record remaining issues to resolve
-- Update `{{FILE_DIRECTORY}}/outcome.md`
-
-### 3. Multi-Step Task Handling
-
-When a task is **non-atomic** (requires multiple steps):
-
-1. **Switch to Orchestrator Mode**:
-
-   ```
-   Use switch_mode tool to enter 'orchestrator' mode
-   ```
-
-2. **Create Atomic Task List**:
-   - Break the complex task into atomic subtasks
-   - Provide clear, actionable subtasks
-   - Ensure each subtask is independently executable
-
-3. **Delegate Execution**:
-   - Create a new task instance in code mode for atomic task execution
-   - Provide the atomic task list as instructions
-
-4. **Return to Code Mode**:
-   ```
-   Use switch_mode tool to return to 'code' mode
-   ```
-
----
-
-## Task Outcome Tracking
-
-### Documentation Requirements
-
-For each completed task, document in `{{FILE_DIRECTORY}}/outcome.md`:
-
-#### Task Summary
-
-- **Task Description**: What was the task
-- **Implementation Approach**: What patterns/methods were used
-- **Files Modified/Created**: List of affected files
-- **Status**: Completed/Partial/Failed
-
-#### Execution Details
-
-- **What You Did**: Brief summary of implementation
-- **Errors/Problems Encountered**: Any issues that arose
-- **Remaining Issues**: What still needs to be resolved
-- **Patterns Used**: Established or adjacent patterns leveraged
-
-#### Quality Validation
-
-- **Functionality Verified**: Does it work as expected
-- **Consistency Check**: Aligns with PRD/ADD requirements
-- **Code Quality**: Follows project standards
-
----
-
-## Pattern Recognition Guidelines
-
-### Established Patterns
-
-Look for existing implementations of:
-
-- Similar UI components (Livewire components)
-- Database models and relationships
-- Service layer patterns
-- API endpoints and controllers
-- Test patterns and structures
-
-### Adjacent Patterns
-
-When no direct patterns exist, find:
-
-- Similar functionality in different domains
-- Comparable UI patterns
-- Related service implementations
-- Analogous test structures
-
-### Consistency Validation
-
-Ensure all implementations:
-
-- Follow existing code organization
-- Use established naming conventions
-- Implement similar error handling
-- Maintain consistent documentation
-- Align with architectural decisions in ADD
-
----
-
-## Error Handling and Problem Resolution
-
-### Issue Resolution Protocol
-
-1. **Review Code**: Identify obvious issues (maximum 1 iteration)
-2. **Add Logging**: Implement sufficient logging to understand the problem
-3. **Attempt Fix**: Address identified issues (maximum 2 cycles)
-4. **Escalate**: If unresolved, utilize Error Solving MCP
-
-### Documentation Requirements
-
-- Document all errors encountered
-- Record resolution approaches attempted
-- Note any remaining unresolved issues
-- Update outcome tracking with problem details
-
----
-
-## Execution Flow
-
-### Quick Task Execution Protocol
-
-```
-1. Read {{FILE}} - GET THE COMPLETE PRE-DEFINED TASK LIST
-   ⚠️ CRITICAL: These tasks are ALREADY WRITTEN - do not create new ones!
-   
-2. For EVERY SINGLE task in the list (DO NOT STOP EARLY):
-   a. Read the existing task description from {{FILE}}
-   b. Analyze the PRE-DEFINED task requirements
-   c. Gather relevant data and context for IMPLEMENTING the existing task
-   d. Identify established or adjacent patterns
-   e. Determine if task is atomic or multi-step
-   f. If multi-step: switch to orchestrator, create atomic tasks, delegate
-   g. If atomic: implement directly using identified patterns
-   h. Validate functionality and consistency
-   i. Document outcome in {{FILE_DIRECTORY}}/outcome.md
-   j. IMMEDIATELY proceed to next PRE-DEFINED task - DO NOT PAUSE OR STOP
-   
-3. ONLY AFTER ALL PRE-DEFINED TASKS: Complete execution summary
-
-⚠️ PERSISTENCE REQUIREMENT: Continue through the ENTIRE pre-defined task list.
-   Do not stop after 4-6 tasks. Process EVERY existing task until completion.
-   
-⚠️ IMPLEMENTATION REQUIREMENT: You are implementing tasks that already exist in {{FILE}}.
-   DO NOT generate, create, or invent new tasks. IMPLEMENT the existing ones.
+# Then gather project context
+- Read {{FILE}} completely for ALL pre-defined tasks
+- Review {{FILE_DIRECTORY}}/outcome.md for current progress
+- Identify established patterns in src/services/, src/components/, src/hooks/
+- Map tasks to existing implementations and dependencies
 ```
 
-### Mode Switching Examples
+### 2. Task Grouping Strategy
+Group tasks by:
+- **Dependency Chain**: Sequential tasks (auth → API → services → UI)
+- **Domain/Feature**: Related functionality (student management, payments, communication)
+- **Complexity Level**: Simple configs → Complex integrations
+- **Context Window**: 5-7 related tasks per group maximum
 
+### 3. Pattern Identification
+```bash
+# For each task group, identify:
+- Existing similar implementations in codebase
+- Required services, hooks, and utilities to reuse
+- Project-specific patterns and conventions
+- Dependencies and integration points
 ```
-# For multi-step task
+
+### 4. Orchestrator Delegation
+```bash
+# Switch to orchestrator mode
 switch_mode('orchestrator')
-# Create atomic task breakdown
-new_task('code', 'Implement atomic subtask 1: ...')
 
-# Return to code mode for next task
-switch_mode('code')
+# Delegate each task group with complete context
+new_task('code', 'Execute Task Group: [GROUP_NAME]
+Context: [Existing patterns and dependencies]
+Tasks: [Specific tasks with success criteria]
+Patterns: [Code examples and established approaches]
+Validation: [How to verify completion]')
+```
+
+### 5. Outcome Documentation
+Update `{{FILE_DIRECTORY}}/outcome.md` for each completed group:
+- Task group description and approach used
+- Files modified/created with specific changes
+- Patterns leveraged and any adaptations made
+- Issues encountered and resolutions applied
+- Validation results and success confirmation
+
+---
+
+## TASK GROUPING EXAMPLES
+
+### Authentication Integration Group
+**Tasks**: Update auth store, configure API endpoints, test token management
+**Pattern**: Existing `src/stores/authStore.ts` with JWT handling
+**Dependencies**: `src/services/api.ts`, `src/services/errorHandling.ts`
+**Success Criteria**: Login flow works with real backend, tokens refresh properly
+
+### Component Integration Group  
+**Tasks**: Connect StudentList to real API, add error handling, update tests
+**Pattern**: Existing `src/hooks/useStudents.ts` with TanStack Query
+**Dependencies**: `src/services/studentService.ts`, `src/components/students/`
+**Success Criteria**: Data loads from API, errors handled gracefully, tests pass
+
+### Service Layer Group
+**Tasks**: Update service endpoints, implement error handling, test API calls
+**Pattern**: Existing `src/services/BaseApiService.ts` with retry logic
+**Dependencies**: `src/services/errorHandling.ts`, `src/services/api.ts`
+**Success Criteria**: All CRUD operations work, proper error responses handled
+
+---
+
+## CONTEXT INTEGRATION FRAMEWORK
+
+### Pre-Execution Context Gathering
+1. **Architecture Review**
+   - Service patterns: `src/services/` - BaseApiService, error handling, retry logic
+   - Component patterns: `src/components/` - Material-UI, TypeScript, established layouts
+   - Hook patterns: `src/hooks/` - TanStack Query, custom hooks, state management
+   - Utility patterns: `src/services/errorHandling.ts`, `src/services/api.ts`
+
+2. **Task-Specific Context**
+   - Map each task to existing files and established patterns
+   - Identify required imports, dependencies, and integration points
+   - Note project constraints: Docker environment, no `npm run dev`, production URLs
+   - Review existing tests and validation approaches
+
+3. **Pattern Documentation**
+   - Document similar implementations found in codebase
+   - Note pattern variations needed for specific use cases
+   - Identify reusable services, hooks, and utilities
+   - Record project-specific conventions and standards
+
+### Context Handoff to Subagents
+Provide subagents with:
+```markdown
+**Existing Code Examples**: [Relevant implementations from codebase]
+**Required Dependencies**: [Imports, services, hooks to use]
+**Project Patterns**: [Established conventions to follow]
+**Success Criteria**: [Specific validation steps and expected outcomes]
+**Environment Notes**: [Docker constraints, API URLs, testing approaches]
 ```
 
 ---
 
-## Success Criteria
+## ERROR HANDLING PLAYBOOK
 
-Task execution is successful **ONLY** when:
+### API Integration Failures
+**Symptoms**: 404, 401, 500 errors during testing
+**Solutions**: 
+1. Verify endpoint URLs: `https://api.cedarheightsmusicacademy.com/api/v1/`
+2. Check authentication: JWT token format and Authorization header
+3. Test with curl first: `curl -H "Authorization: Bearer [TOKEN]" [ENDPOINT]`
+4. Validate request/response data structures against existing patterns
 
-- **ALL TASKS** in {{FILE}} are completed or documented as blocked
-- **EVERY SINGLE TASK** has been processed (not just the first few)
-- Each task uses established or adjacent patterns appropriately
-- All implementations are consistent with PRD/ADD requirements
-- Complete outcome documentation exists in `{{FILE_DIRECTORY}}/outcome.md`
-- Code quality meets project standards
-- Functionality is validated and working
+### Pattern Mismatch Issues
+**Symptoms**: Code doesn't follow existing patterns, TypeScript errors
+**Solutions**:
+1. Re-examine similar implementations: `codebase_search("similar functionality")`
+2. Review existing service/hook patterns in `src/services/`, `src/hooks/`
+3. Check import patterns and TypeScript interfaces
+4. Validate against project coding standards in `.roo/rules/rules.md`
 
-## ⚠️ COMPLETION VERIFICATION ⚠️
-
-Before considering execution complete, you MUST verify:
-- [ ] You have read the ENTIRE task list from {{FILE}}
-- [ ] You have processed EVERY task in the list (not stopped early)
-- [ ] Each task is documented in `{{FILE_DIRECTORY}}/outcome.md` with status
-- [ ] No tasks remain unaddressed unless explicitly blocked
-
----
-
-## Quality Assurance
-
-### Before Completing Each Task
-
-- [ ] Functionality works as expected
-- [ ] Code follows established patterns
-- [ ] Implementation is consistent with PRD/ADD
-- [ ] Error handling is appropriate
-- [ ] Documentation is updated
-- [ ] Outcome is recorded
-
-### Before Final Completion
-
-- [ ] **ALL TASKS** addressed (completed or documented as blocked) - NOT JUST A FEW
-- [ ] **ENTIRE TASK LIST** has been processed systematically
-- [ ] Outcome documentation is comprehensive for **EVERY TASK**
-- [ ] No obvious code quality issues
-- [ ] Patterns are consistently applied
-- [ ] PRD/ADD compliance verified
-- [ ] **VERIFIED**: No tasks remain unprocessed in the original list
+### Dependency Conflicts
+**Symptoms**: Import errors, circular dependencies, type mismatches
+**Solutions**:
+1. Review existing import patterns in similar components
+2. Check for circular dependencies in service layer
+3. Verify TypeScript interface compatibility
+4. Update imports to match established project structure
 
 ---
 
-**Begin execution by reading `{{FILE}}` and starting with the first task in the list.**
+## PROGRESS TRACKING
 
-## 🔄 EXECUTION COMMITMENT 🔄
+### Task Group Milestones
+For each group, verify:
+- [ ] Context gathered and patterns identified
+- [ ] Implementation approach validated against existing code
+- [ ] Core functionality implemented using established patterns
+- [ ] Error handling added following project conventions
+- [ ] Integration tested with real backend/data
+- [ ] Documentation updated in outcome.md
+- [ ] Success criteria met and validated
+
+### Overall Progress Indicators
+- Task groups completed: X/Y
+- Critical path items: Status and dependencies
+- Blocked items: Count, reasons, and resolution plans
+- Quality metrics: Tests passing, patterns followed, integration verified
+
+---
+
+## QUICK REFERENCE
+
+### Essential Commands
+```bash
+codebase_search("functionality")  # Find patterns FIRST
+switch_mode('orchestrator')       # For task group delegation  
+new_task('code', 'instructions')  # Delegate with full context
+update_todo_list                  # Track progress milestones
+```
+
+### Success Checklist
+- [ ] ALL tasks from {{FILE}} identified and grouped logically
+- [ ] Each group has complete context and established patterns
+- [ ] All groups delegated with comprehensive instructions
+- [ ] Outcomes documented in {{FILE_DIRECTORY}}/outcome.md
+- [ ] No tasks left unaddressed or incomplete
+
+### Red Flags ⚠️
+- Creating new tasks instead of implementing existing ones
+- Stopping after only a few task groups  
+- Missing context or patterns in delegation instructions
+- Incomplete outcome documentation
+- Not using `codebase_search` for new code exploration
+
+### Environment Reminders
+- **Docker Environment**: Never use `npm run dev` - use deploy/test production
+- **API Base URL**: `https://api.cedarheightsmusicacademy.com`
+- **Server Check**: `curl -s -o /dev/null -w "%{http_code}" http://localhost:5173`
+- **Pattern Priority**: Always use existing services, hooks, and utilities
+
+---
+
+## EXECUTION COMMITMENT
 
 **I COMMIT TO:**
-- Processing **EVERY SINGLE TASK** in the quick_tasks.md file
-- **NOT STOPPING** after completing only a few tasks
-- **CONTINUING SYSTEMATICALLY** through the entire task list
-- **DOCUMENTING EACH TASK** outcome before proceeding
-- **ONLY COMPLETING** when all tasks are addressed or blocked
+- Processing **EVERY SINGLE TASK** through organized, logical groups
+- Using **ESTABLISHED PATTERNS** and existing codebase implementations
+- **NOT STOPPING** until all task groups are completed or documented as blocked
+- **DOCUMENTING OUTCOMES** comprehensively for each task group
+- **VALIDATING SUCCESS** against defined criteria before proceeding
 
-**EXECUTION STARTS NOW - PROCESS THE COMPLETE TASK LIST**
+**EXECUTION PROTOCOL:**
+1. Read {{FILE}} completely → Identify ALL pre-defined tasks
+2. Group tasks logically → Use established patterns and dependencies  
+3. Switch to orchestrator → Delegate with comprehensive context
+4. Process ALL groups → Document outcomes systematically
+5. Verify completion → Ensure no tasks remain unaddressed
+
+---
+
+**Begin execution by reading {{FILE}}, grouping ALL tasks, and switching to orchestrator mode.**
