@@ -129,6 +129,8 @@ Code that violates specs in `ai_docs/context/` or establishes patterns inconsist
 2. **Categorize**: New vs modified, API vs service vs schema vs worker
 
 3. **Create detailed review file** in `ai_docs/reviews/review_YYYY-MM-DD_HHMM.md`
+   - **IMPORTANT**: Use TODAY'S actual date and time for all review file names and timestamps
+   - Format: `review_2025-11-16_1225.md` (example using today's date)
 
 4. **Document brief summary in CHANGELOG.md**:
    ```markdown
@@ -147,6 +149,7 @@ Code that violates specs in `ai_docs/context/` or establishes patterns inconsist
    
    **Review Details**: See `ai_docs/tasks/review_YYYY-MM-DD_HHMM.md`
    ```
+   - **IMPORTANT**: Replace YYYY-MM-DD and HH:MM with TODAY'S actual date and time
 
 **CHECKPOINT**: All changed files identified and documented before proceeding.
 
@@ -276,14 +279,16 @@ For each changed file, check for all four categories:
 
 ## CHANGELOG Usage
 
+**IMPORTANT**: Always use TODAY'S actual date and time when creating review entries.
+
 Use `CHANGELOG.md` in project root for brief version tracking:
 
 ```markdown
 # Changelog
 
-## [Unreleased] - 2025-01-08
+## [Unreleased] - 2025-03-15
 
-### Review Session - 20:30 PST
+### Review Session - 14:45 PST
 
 **Files Changed**: 3
 - **New Files**:
@@ -293,15 +298,17 @@ Use `CHANGELOG.md` in project root for brief version tracking:
   - `app/services/data_service.py`
   - `app/schemas/patient.py`
 
-**Review Details**: See `ai_docs/tasks/review_2025-01-08_2030.md`
+**Review Details**: See `ai_docs/tasks/review_2025-03-15_1445.md`
 ```
 
 ## Detailed Review Documentation
 
-Create detailed review files in `ai_docs/tasks/` with naming format: `review_YYYY-MM-DD_HHMM.md`
+**IMPORTANT**: Always use TODAY'S actual date and time for review file names and all timestamps.
+
+Create detailed review files in `ai_docs/reviews/` with naming format: `review_YYYY-MM-DD_HHMM.md`
 
 ```markdown
-# Code Review - 2025-01-08 20:30 PST
+# Code Review - 2025-07-22 09:15 PST
 
 **Reviewer**: Roo (AI Code Quality Consultant)
 **Files Changed**: 3
@@ -346,8 +353,10 @@ Create detailed review files in `ai_docs/tasks/` with naming format: `review_YYY
 - **Branch**: feature/new-endpoint
 - **Files Deployed**: 3
 - **Status**: Success
-- **Deployment Time**: 2025-01-08 20:45 PST
+- **Deployment Time**: 2025-07-22 09:30 PST
 ```
+
+**NOTE**: The above example uses 2025-07-22 as a sample date. When performing actual reviews, ALWAYS use TODAY'S current date and time.
 
 ## Python-Specific Checks
 
@@ -389,16 +398,17 @@ ruff check . --fix && ruff format .
 
 ## Critical Reminders
 
-1. **CONVERSATIONAL REVIEW IS MANDATORY** - Discuss findings, don't just report
-2. **WAIT FOR RESPONSES** - Don't proceed without developer input
-3. **EXPLICIT APPROVAL REQUIRED** - Never deploy without clear approval
-4. **USE CODEBASE_SEARCH FIRST** - Before claiming redundancy, search for existing code
-5. **DANGEROUS PATTERNS FIRST** - Prioritize safety over style
-6. **DOCUMENT IN CHANGELOG** - Track all findings and resolutions
-7. **NO AUTOMATIC APPROVAL** - Always require developer confirmation
-8. **RUN RUFF BEFORE DEPLOY** - Ensure code quality standards
-9. **TEST DEPLOYMENT LOCALLY** - Verify changes work in Docker environment
-10. **VERIFY REMOTE DEPLOYMENT** - Confirm deployment succeeded on remote server
+1. **USE TODAY'S DATE AND TIME** - All review files, timestamps, and documentation MUST use the current date and time, not example dates
+2. **CONVERSATIONAL REVIEW IS MANDATORY** - Discuss findings, don't just report
+3. **WAIT FOR RESPONSES** - Don't proceed without developer input
+4. **EXPLICIT APPROVAL REQUIRED** - Never deploy without clear approval
+5. **USE CODEBASE_SEARCH FIRST** - Before claiming redundancy, search for existing code
+6. **DANGEROUS PATTERNS FIRST** - Prioritize safety over style
+7. **DOCUMENT IN CHANGELOG** - Track all findings and resolutions
+8. **NO AUTOMATIC APPROVAL** - Always require developer confirmation
+9. **RUN RUFF BEFORE DEPLOY** - Ensure code quality standards
+10. **TEST DEPLOYMENT LOCALLY** - Verify changes work in Docker environment
+11. **VERIFY REMOTE DEPLOYMENT** - Confirm deployment succeeded on remote server
 
 ## Deployment Context
 
