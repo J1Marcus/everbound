@@ -1,0 +1,159 @@
+# ============================================
+# Caddy Production Configuration
+# ============================================
+# Automatic HTTPS with Let's Encrypt
+# Routes traffic to Kong API Gateway and Supabase Studio
+#
+# Environment Variables Required:
+# - API_DOMAIN: Domain for API Gateway (e.g., api.yourdomain.com)
+# - STUDIO_DOMAIN: Domain for Studio (e.g., studio.yourdomain.com)
+# - ADMIN_EMAIL: Email for Let's Encrypt notifications
+#
+# Features:
+# - Automatic HTTPS with Let's Encrypt
+# - TLS 1.2 and 1.3 support
+# - Security headers (HSTS, XSS, etc.)
+# - Health checks for backend services
+# - Structured JSON logging
+#
+# Usage: caddy run --config Caddyfile.prod
+
+{
+    # Global options
+    email {$ADMIN_EMAIL}
+    
+    # Global logging
+    log {
+        output file /var/log/caddy/access.log
+        format json
+        level INFO
+    }
+}
+
+# ============================================
+# API Gateway
+# ============================================
+# Routes all API traffic through Kong with HTTPS
+{$API_DOMAIN} {
+    # Automatic HTTPS with Let's Encrypt
+    tls {
+        protocols tls1.2 tls1.3
+    }
+
+    # Security headers
+    header {
+        # Enable HTTP Strict Transport Security (HSTS)
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        
+        # Prevent clickjacking attacks
+        X-Frame-Options "SAMEORIGIN"
+        
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+        
+        # Enable XSS protection
+        X-XSS-Protection "1; mode=block"
+        
+        # Control referrer information
+        Referrer-Policy "strict-origin-when-cross-origin"
+        
+        # Content Security Policy (adjust as needed)
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+        
+        # Remove server identification
+        -Server
+    }
+
+    # Request logging
+    log {
+        output file /var/log/caddy/api.log
+        format json
+    }
+
+    # Reverse proxy to Kong
+    reverse_proxy kong:8000 {
+        # Forward original request headers
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+        
+        # Health check configuration
+        health_uri /health
+        health_interval 30s
+        health_timeout 5s
+        health_status 2xx
+        
+        # Connection settings
+        transport http {
+            dial_timeout 5s
+            response_header_timeout 30s
+            keepalive 90s
+            keepalive_idle_conns 10
+        }
+    }
+}
+
+# ============================================
+# Studio Interface
+# ============================================
+# Web-based management interface with HTTPS
+{$STUDIO_DOMAIN} {
+    # Automatic HTTPS with Let's Encrypt
+    tls {
+        protocols tls1.2 tls1.3
+    }
+
+    # Security headers
+    header {
+        # Enable HTTP Strict Transport Security (HSTS)
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        
+        # Prevent clickjacking attacks
+        X-Frame-Options "SAMEORIGIN"
+        
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+        
+        # Enable XSS protection
+        X-XSS-Protection "1; mode=block"
+        
+        # Control referrer information
+        Referrer-Policy "strict-origin-when-cross-origin"
+        
+        # Content Security Policy (adjust as needed for Studio)
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;"
+        
+        # Remove server identification
+        -Server
+    }
+
+    # Request logging
+    log {
+        output file /var/log/caddy/studio.log
+        format json
+    }
+
+    # Reverse proxy to Studio
+    reverse_proxy studio:3000 {
+        # Forward original request headers
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+        
+        # Health check configuration
+        health_uri /api/profile
+        health_interval 30s
+        health_timeout 5s
+        health_status 2xx
+        
+        # Connection settings
+        transport http {
+            dial_timeout 5s
+            response_header_timeout 30s
+            keepalive 90s
+            keepalive_idle_conns 10
+        }
+    }
+}

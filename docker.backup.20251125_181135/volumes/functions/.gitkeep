@@ -1,0 +1,8 @@
+# This directory is for Edge Functions code
+# Place your function directories here
+# Example structure:
+#   functions/
+#     hello-world/
+#       index.ts
+#     another-function/
+#       index.ts

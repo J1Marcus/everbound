@@ -1,0 +1,101 @@
+_format_version: "3.0"
+
+# ============================================
+# Kong Declarative Configuration
+# ============================================
+# This file defines routing rules for the Kong API Gateway
+# All client requests go through Kong, which routes them to backend services
+#
+# Service URLs use Docker network names (gotrue, postgrest, etc.)
+# Routes define the URL paths that map to each service
+
+services:
+  # ============================================
+  # Authentication Service (GoTrue)
+  # ============================================
+  # Handles user authentication, registration, and session management
+  - name: auth
+    url: http://gotrue:9999
+    routes:
+      - name: auth-routes
+        paths:
+          - /auth/v1/
+        strip_path: false
+
+  # ============================================
+  # REST API Service (PostgREST)
+  # ============================================
+  # Automatic REST API from PostgreSQL schema
+  - name: rest
+    url: http://postgrest:3000
+    routes:
+      - name: rest-routes
+        paths:
+          - /rest/v1/
+        strip_path: false
+
+  # ============================================
+  # Realtime Service
+  # ============================================
+  # WebSocket connections for real-time database updates
+  - name: realtime
+    url: http://realtime:4000
+    routes:
+      - name: realtime-routes
+        paths:
+          - /realtime/v1/
+        strip_path: false
+
+  # ============================================
+  # Storage Service
+  # ============================================
+  # Object storage for file uploads and downloads
+  - name: storage
+    url: http://storage:5000
+    routes:
+      - name: storage-routes
+        paths:
+          - /storage/v1/
+        strip_path: false
+
+  # ============================================
+  # Edge Functions Service
+  # ============================================
+  # Serverless function execution
+  - name: functions
+    url: http://functions:9000
+    routes:
+      - name: functions-routes
+        paths:
+          - /functions/v1/
+        strip_path: false
+
+# ============================================
+# Global Plugins (Optional)
+# ============================================
+# Uncomment to enable global rate limiting, CORS, etc.
+# plugins:
+#   - name: cors
+#     config:
+#       origins:
+#         - "*"
+#       methods:
+#         - GET
+#         - POST
+#         - PUT
+#         - PATCH
+#         - DELETE
+#         - OPTIONS
+#       headers:
+#         - Accept
+#         - Authorization
+#         - Content-Type
+#       exposed_headers:
+#         - X-Auth-Token
+#       credentials: true
+#       max_age: 3600
+#
+#   - name: rate-limiting
+#     config:
+#       minute: 100
+#       hour: 1000

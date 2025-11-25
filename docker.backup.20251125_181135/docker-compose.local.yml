@@ -1,0 +1,9 @@
+# TODO: Phase 2 - Local Development Overrides
+# This file will contain local development-specific configurations:
+# - Expose all service ports for debugging (PostgreSQL, Redis, MinIO console, etc.)
+# - Mount local volumes for hot-reloading
+# - Enable debug logging
+# - Use localhost domains
+# - Disable SSL/TLS requirements
+#
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.local.yml up

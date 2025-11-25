@@ -1,0 +1,575 @@
+version: '3.8'
+
+# ============================================
+# Supabase Self-Hosted Docker Compose Configuration
+# ============================================
+# Phase 3: Complete Supabase Stack
+# This file defines all services for a complete Supabase instance:
+#
+# Data Layer (Phase 2):
+# - PostgreSQL: Database with Supabase extensions
+# - Redis: Caching and session storage
+# - MinIO: S3-compatible object storage
+#
+# Application Layer (Phase 3):
+# - Meta API: Database metadata and migrations
+# - GoTrue: Authentication service
+# - PostgREST: Automatic REST API
+# - Realtime: WebSocket server for real-time updates
+# - Storage API: Object storage management
+# - Edge Functions: Serverless function runtime
+# - Kong: API Gateway and routing
+# - Studio: Web-based management interface
+#
+# All services use ${PROJECT_NAME} prefix for multi-instance isolation
+# Port mappings use ${PORT:-default} syntax for flexibility
+
+services:
+  # ============================================
+  # PostgreSQL Database
+  # ============================================
+  # Primary database with all required Supabase extensions
+  # Extensions: uuid-ossp, pgcrypto, pgjwt, pg_net, pgsodium, pg_graphql, pg_stat_statements
+  db:
+    container_name: ${PROJECT_NAME}_db
+    image: supabase/postgres:15.1.0.147
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      # Enable extensions on startup
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+    volumes:
+      # Persistent data storage
+      - supabase_template_db_data:/var/lib/postgresql/data
+      # Initialization script to enable extensions and create schemas
+      - ./volumes/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    command:
+      - postgres
+      - -c
+      - config_file=/etc/postgresql/postgresql.conf
+      - -c
+      - log_min_messages=warning
+      - -c
+      - log_min_error_statement=error
+      - -c
+      - log_statement=none
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # Redis Cache
+  # ============================================
+  # Used for:
+  # - Realtime server message queue
+  # - Rate limiting cache
+  # - Session storage
+  redis:
+    container_name: ${PROJECT_NAME}_redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    command: redis-server --appendonly yes --appendfsync everysec
+    volumes:
+      # Persistent cache storage with AOF (Append Only File)
+      - supabase_template_redis_data:/data
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # MinIO Object Storage
+  # ============================================
+  # S3-compatible storage for:
+  # - User uploaded files
+  # - Multi-tenant bucket support
+  # - Public/private file access
+  minio:
+    container_name: ${PROJECT_NAME}_minio
+    image: minio/minio:latest
+    ports:
+      # API port for S3 operations
+      - "127.0.0.1:${MINIO_PORT:-9000}:9000"
+      # Web console port
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      # Browser access settings
+      MINIO_BROWSER: "on"
+      MINIO_BROWSER_REDIRECT_URL: http://localhost:${MINIO_CONSOLE_PORT:-9001}
+    command: server /data --console-address ":9001"
+    volumes:
+      # Persistent object storage
+      - supabase_template_minio_data:/data
+      # Initialization script for bucket creation
+      - ./volumes/minio/init.sh:/docker-entrypoint.d/init.sh:ro
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # Meta API
+  # ============================================
+  # Database metadata and migration management
+  # Provides schema introspection and migration tools
+  meta:
+    container_name: ${PROJECT_NAME}_meta
+    image: supabase/postgres-meta:v0.68.0
+    ports:
+      - "127.0.0.1:${META_PORT:-8080}:8080"
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: db
+      PG_META_DB_PORT: 5432
+      PG_META_DB_NAME: ${POSTGRES_DB:-postgres}
+      PG_META_DB_USER: ${POSTGRES_USER:-postgres}
+      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # GoTrue Authentication
+  # ============================================
+  # Handles user authentication and authorization
+  # Supports email/password, OAuth, magic links, and JWT tokens
+  gotrue:
+    container_name: ${PROJECT_NAME}_gotrue
+    image: supabase/gotrue:v2.99.0
+    ports:
+      - "127.0.0.1:${GOTRUE_PORT:-9999}:9999"
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      GOTRUE_DB_DRIVER: postgres
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-postgres}
+      GOTRUE_SITE_URL: ${SITE_URL}
+      GOTRUE_URI_ALLOW_LIST: ${ADDITIONAL_REDIRECT_URLS}
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
+      GOTRUE_JWT_EXP: ${JWT_EXPIRY}
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_SMTP_HOST: ${SMTP_HOST}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT}
+      GOTRUE_SMTP_USER: ${SMTP_USER}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS}
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL}
+      GOTRUE_MAILER_AUTOCONFIRM: false
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: true
+      API_EXTERNAL_URL: ${API_EXTERNAL_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # PostgREST
+  # ============================================
+  # Automatic REST API from PostgreSQL schema
+  # Enforces row-level security and provides OpenAPI documentation
+  postgrest:
+    container_name: ${PROJECT_NAME}_postgrest
+    image: postgrest/postgrest:v11.2.2
+    ports:
+      - "127.0.0.1:${POSTGREST_PORT:-3000}:3000"
+    environment:
+      PGRST_DB_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-postgres}
+      PGRST_DB_SCHEMAS: public,storage,graphql_public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
+      PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXPIRY}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # Realtime Server
+  # ============================================
+  # WebSocket server for real-time database changes
+  # Supports subscriptions, broadcast channels, and presence tracking
+  realtime:
+    container_name: ${PROJECT_NAME}_realtime
+    image: supabase/realtime:v2.25.35
+    ports:
+      - "127.0.0.1:${REALTIME_PORT:-4000}:4000"
+    environment:
+      PORT: 4000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB:-postgres}
+      DB_AFTER_CONNECT_QUERY: SET search_path TO _realtime
+      DB_ENC_KEY: supabaserealtime
+      API_JWT_SECRET: ${JWT_SECRET}
+      FLY_ALLOC_ID: fly123
+      FLY_APP_NAME: realtime
+      SECRET_KEY_BASE: ${JWT_SECRET}
+      ERL_AFLAGS: -proto_dist inet_tcp
+      ENABLE_TAILSCALE: "false"
+      DNS_NODES: "''"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # Storage API
+  # ============================================
+  # Object storage management with S3-compatible backend
+  # Handles file uploads, downloads, transformations, and access control
+  storage:
+    container_name: ${PROJECT_NAME}_storage
+    image: supabase/storage-api:v0.43.11
+    ports:
+      - "127.0.0.1:${STORAGE_PORT:-5000}:5000"
+    environment:
+      ANON_KEY: ${ANON_KEY}
+      SERVICE_KEY: ${SERVICE_ROLE_KEY}
+      POSTGREST_URL: http://postgrest:3000
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-postgres}
+      FILE_SIZE_LIMIT: 52428800
+      STORAGE_BACKEND: s3
+      TENANT_ID: stub
+      REGION: us-east-1
+      GLOBAL_S3_BUCKET: supabase-storage
+      GLOBAL_S3_ENDPOINT: http://minio:9000
+      GLOBAL_S3_FORCE_PATH_STYLE: "true"
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+      postgrest:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # Edge Functions Runtime
+  # ============================================
+  # Serverless function execution environment
+  # Supports TypeScript/JavaScript with database and API access
+  functions:
+    container_name: ${PROJECT_NAME}_functions
+    image: supabase/edge-runtime:v1.22.4
+    ports:
+      - "127.0.0.1:${FUNCTIONS_PORT:-9002}:9000"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      SUPABASE_DB_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-postgres}
+    command:
+      - start
+      - --main-service
+      - /home/deno/functions
+      - --port
+      - "9000"
+    volumes:
+      - ./volumes/functions:/home/deno/functions:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # Kong API Gateway
+  # ============================================
+  # Central API gateway for routing and request management
+  # Handles rate limiting, authentication, and CORS
+  kong:
+    container_name: ${PROJECT_NAME}_kong
+    image: kong:3.4
+    ports:
+      - "127.0.0.1:${KONG_HTTP_PORT:-8000}:8000"
+      - "127.0.0.1:${KONG_HTTPS_PORT:-8443}:8443"
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    volumes:
+      - ./volumes/kong/kong.yml:/kong/kong.yml:ro
+    depends_on:
+      gotrue:
+        condition: service_healthy
+      postgrest:
+        condition: service_healthy
+      realtime:
+        condition: service_healthy
+      storage:
+        condition: service_healthy
+      functions:
+        condition: service_healthy
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # Supabase Studio
+  # ============================================
+  # Web-based management interface
+  # Provides table editor, SQL editor, API docs, and more
+  studio:
+    container_name: ${PROJECT_NAME}_studio
+    image: supabase/studio:20231123-64a766a
+    ports:
+      - "127.0.0.1:${STUDIO_PORT:-3000}:3000"
+    environment:
+      STUDIO_PG_META_URL: http://meta:8080
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DEFAULT_ORGANIZATION_NAME: ${PROJECT_NAME}
+      DEFAULT_PROJECT_NAME: ${PROJECT_NAME}
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_PUBLIC_URL: ${API_EXTERNAL_URL}
+      SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+    depends_on:
+      meta:
+        condition: service_healthy
+      kong:
+        condition: service_healthy
+    networks:
+      - supabase_template_network
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # Caddy Reverse Proxy
+  # ============================================
+  # Entry point for all external traffic
+  # Provides SSL/TLS termination and routing
+  caddy:
+    container_name: ${PROJECT_NAME}_caddy
+    image: caddy:2.7-alpine
+    ports:
+      # Bind to localhost only for local development
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
+    volumes:
+      # Use local development Caddyfile by default
+      - ../caddy/Caddyfile.local:/etc/caddy/Caddyfile:ro
+      # Persistent data for certificates and cache
+      - supabase_template_caddy_data:/data
+      - supabase_template_caddy_config:/config
+      # Log storage
+      - supabase_template_caddy_logs:/var/log/caddy
+    depends_on:
+      kong:
+        condition: service_healthy
+      studio:
+        condition: service_healthy
+    networks:
+      - supabase_template_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# ============================================
+# Networks
+# ============================================
+# Isolated network for all services to communicate
+# Uses custom subnet for predictable IP addressing
+networks:
+  supabase_template_network:
+    name: supabase_template_network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+
+# ============================================
+# Volumes
+# ============================================
+# Named volumes for persistent data storage
+# All volumes use ${PROJECT_NAME} prefix for multi-instance isolation
+volumes:
+  # PostgreSQL data directory
+  supabase_template_db_data:
+    name: ${PROJECT_NAME}_db_data
+    driver: local
+  
+  # Redis AOF persistence
+  supabase_template_redis_data:
+    name: ${PROJECT_NAME}_redis_data
+    driver: local
+  
+  # MinIO object storage
+  supabase_template_minio_data:
+    name: ${PROJECT_NAME}_minio_data
+    driver: local
+  
+  # Caddy reverse proxy data (certificates, cache)
+  supabase_template_caddy_data:
+    name: ${PROJECT_NAME}_caddy_data
+    driver: local
+  
+  # Caddy configuration
+  supabase_template_caddy_config:
+    name: ${PROJECT_NAME}_caddy_config
+    driver: local
+  
+  # Caddy access logs
+  supabase_template_caddy_logs:
+    name: ${PROJECT_NAME}_caddy_logs
+    driver: local

@@ -1,0 +1,78 @@
+# ============================================
+# Caddy Local Development Configuration
+# ============================================
+# HTTP only (no SSL/TLS for local development)
+# Routes traffic to Kong API Gateway and Supabase Studio
+#
+# Services:
+# - Port 80 -> Kong API Gateway (http://kong:8000)
+# - Port 3000 -> Supabase Studio (http://studio:3000)
+#
+# Usage: caddy run --config Caddyfile.local
+
+{
+    # Global options
+    admin off
+    auto_https off
+    
+    # Global logging
+    log {
+        output file /var/log/caddy/access.log
+        format json
+        level INFO
+    }
+}
+
+# ============================================
+# API Gateway (Kong)
+# ============================================
+# Routes all API traffic through Kong
+:80 {
+    # Request logging
+    log {
+        output file /var/log/caddy/api.log
+        format json
+    }
+
+    # Reverse proxy to Kong
+    reverse_proxy kong:8000 {
+        # Forward original request headers
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+        
+        # Connection settings
+        transport http {
+            dial_timeout 5s
+            response_header_timeout 30s
+        }
+    }
+}
+
+# ============================================
+# Studio Interface
+# ============================================
+# Web-based management interface
+:3000 {
+    # Request logging
+    log {
+        output file /var/log/caddy/studio.log
+        format json
+    }
+
+    # Reverse proxy to Studio
+    reverse_proxy studio:3000 {
+        # Forward original request headers
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+        
+        # Connection settings
+        transport http {
+            dial_timeout 5s
+            response_header_timeout 30s
+        }
+    }
+}

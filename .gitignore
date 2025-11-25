@@ -1,2 +1,289 @@
-/examples/*
-GENAI*
+# Supabase Self-Hosted Template - .gitignore
+
+# ============================================
+# Environment Files
+# ============================================
+# Exclude actual environment files but keep examples
+.env
+.env.local
+.env.production
+.env.*.local
+docker/.env
+docker/.env.local
+docker/.env.production
+
+# Keep example files
+!.env.example
+!docker/.env.example
+
+# ============================================
+# Docker Volumes and Data
+# ============================================
+# Exclude all Docker volume data
+docker/volumes/postgres/data/
+docker/volumes/minio/data/
+docker/volumes/redis/data/
+docker/volumes/*/data/
+
+# Keep initialization scripts
+!docker/volumes/postgres/init.sql
+!docker/volumes/minio/init.sh
+
+# ============================================
+# Caddy Data
+# ============================================
+# Exclude Caddy certificates and data
+caddy/data/
+caddy/config/
+caddy/*.json
+caddy/*.crt
+caddy/*.key
+
+# Keep Caddyfile configurations
+!caddy/Caddyfile.local
+!caddy/Caddyfile.prod
+
+# ============================================
+# Backup Files
+# ============================================
+# Exclude all backup files
+backups/
+*.backup
+*.dump
+*.sql.gz
+*.tar.gz
+backup_*.tar.gz
+postgres_*.dump
+storage_*.tar.gz
+
+# ============================================
+# Log Files
+# ============================================
+# Exclude all log files
+*.log
+logs/
+docker/logs/
+caddy/logs/
+*.log.*
+
+# ============================================
+# Temporary Files
+# ============================================
+# Exclude temporary and cache files
+tmp/
+temp/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+
+# ============================================
+# IDE and Editor Files
+# ============================================
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains IDEs (IntelliJ, PyCharm, WebStorm, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ============================================
+# Operating System Files
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================
+# SSL/TLS Certificates
+# ============================================
+# Exclude private keys and certificates
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Keep example or template certificates
+!*.example.pem
+!*.example.key
+
+# ============================================
+# Secrets and Credentials
+# ============================================
+# Exclude any files containing secrets
+secrets/
+credentials/
+*.secret
+*.credentials
+*_secret
+*_credentials
+jwt_secret*
+service_role_key*
+anon_key*
+
+# ============================================
+# Database Files
+# ============================================
+# Exclude local database files
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+# ============================================
+# Node.js (if using for scripts)
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.npm
+.yarn-integrity
+
+# ============================================
+# Python (if using for scripts)
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+venv/
+ENV/
+env/
+.venv
+
+# ============================================
+# Docker
+# ============================================
+# Exclude Docker override files (keep examples)
+docker-compose.override.yml
+!docker-compose.override.yml.example
+
+# ============================================
+# Monitoring and Metrics
+# ============================================
+# Exclude monitoring data
+prometheus/data/
+grafana/data/
+metrics/
+
+# ============================================
+# Test and Coverage
+# ============================================
+# Exclude test results and coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+coverage.xml
+*.cover
+
+# ============================================
+# Documentation Build
+# ============================================
+# Exclude generated documentation
+docs/_build/
+docs/.doctrees/
+site/
+
+# ============================================
+# Miscellaneous
+# ============================================
+# Exclude any other sensitive or generated files
+*.pid
+*.seed
+*.pid.lock
+.env.test
+.env.production.local
+.vercel

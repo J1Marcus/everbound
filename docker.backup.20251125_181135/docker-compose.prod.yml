@@ -1,0 +1,36 @@
+# ============================================
+# Production Overrides for Supabase Self-Hosted
+# ============================================
+# This file contains production-specific configurations:
+# - Caddy exposed to external network (0.0.0.0) for HTTPS
+# - Production Caddyfile with automatic SSL
+# - Production domains from environment variables
+# - All other services remain on internal network only
+#
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  # ============================================
+  # Caddy Reverse Proxy - Production Configuration
+  # ============================================
+  # Override for production deployment with HTTPS
+  caddy:
+    ports:
+      # Expose to all interfaces for external access
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    volumes:
+      # Use production Caddyfile with automatic HTTPS
+      - ./caddy/Caddyfile.prod:/etc/caddy/Caddyfile:ro
+      # Persistent data for Let's Encrypt certificates
+      - ${PROJECT_NAME}_caddy_data:/data
+      - ${PROJECT_NAME}_caddy_config:/config
+      # Log storage
+      - ${PROJECT_NAME}_caddy_logs:/var/log/caddy
+    environment:
+      # Production domains for automatic HTTPS
+      - API_DOMAIN=${API_EXTERNAL_URL}
+      - STUDIO_DOMAIN=${STUDIO_EXTERNAL_URL}
+      - ADMIN_EMAIL=${SMTP_ADMIN_EMAIL}
