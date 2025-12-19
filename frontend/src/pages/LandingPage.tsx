@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import './LandingPage.css'
 import {
@@ -8,8 +9,12 @@ import {
   BookIcon,
   Book3D
 } from '../components/DecorativeElements'
+import AuthModal from '../components/AuthModal'
 
 export default function LandingPage() {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [authMode, setAuthMode] = useState<'signup' | 'signin'>('signup')
+
   return (
     <div className="landing">
       {/* Hero Section - Book Opening Experience */}
@@ -19,9 +24,9 @@ export default function LandingPage() {
         <CornerFlourish className="corner-flourish bottom-right" style={{ position: 'absolute', bottom: 0, right: 0, width: '150px', height: '150px', color: 'var(--color-amber)', opacity: 0.15, transform: 'rotate(180deg)' }} />
         
         <div className="hero-content">
-          <h1 className="hero-title">your memories, shaped into a book your family will treasure</h1>
+          <h1 className="hero-title">YOUR MEMORIES, shaped into a book your family will treasure</h1>
           <p className="hero-subtitle">
-            We'll help you create a beautiful book of your memories
+            We shape your story into a beautifully written book
           </p>
           
           <div className="hero-quote">
@@ -32,12 +37,24 @@ export default function LandingPage() {
           </div>
 
           <div className="hero-actions">
-            <Link to="/signup" className="btn btn-primary">
-              Begin your memoir
-            </Link>
-            <Link to="/signin" className="btn-text">
-              I already have an account
-            </Link>
+            <button
+              onClick={() => {
+                setAuthMode('signin')
+                setIsAuthModalOpen(true)
+              }}
+              className="btn btn-primary"
+            >
+              Let's get started
+            </button>
+            <button
+              onClick={() => {
+                setAuthMode('signup')
+                setIsAuthModalOpen(true)
+              }}
+              className="btn-text"
+            >
+              Sign in
+            </button>
           </div>
         </div>
       </section>
@@ -54,32 +71,38 @@ export default function LandingPage() {
           <div className="journey-steps">
             <div className="journey-step">
               <PenIcon className="step-icon" />
-              <h3 className="step-title">We learn your writing style</h3>
-              <p className="step-description">
-                Write a short memory in your own words. We'll learn how you naturally
-                express yourself—your tone, your rhythm, your way of telling a story—so
-                your book reads authentically in your voice.
-              </p>
+              <div className="step-content">
+                <h3 className="step-title">We learn your writing style</h3>
+                <p className="step-description">
+                  Write a short memory in your own words. We'll learn how you naturally
+                  express yourself—your tone, your rhythm, your way of telling a story—so
+                  your book reads authentically in your voice.
+                </p>
+              </div>
+            </div>
+
+            <div className="journey-step">
+              <MicrophoneIcon className="step-icon" />
+              <div className="step-content">
+                <h3 className="step-title">We guide you through your memories</h3>
+                <p className="step-description">
+                  Through thoughtful questions and gentle prompts, we'll help you explore
+                  the moments that shaped you. Like a conversation with a caring interviewer,
+                  we'll ask about the details that bring your stories to life—the sights,
+                  sounds, and feelings that make your memories vivid and meaningful.
+                </p>
+              </div>
             </div>
 
             <div className="journey-step">
               <BookIcon className="step-icon" />
-              <h3 className="step-title">We guide you through your memories</h3>
-              <p className="step-description">
-                Through thoughtful questions and gentle prompts, we'll help you explore
-                the moments that shaped you. Like a conversation with a caring interviewer,
-                we'll ask about the details that bring your stories to life—the sights,
-                sounds, and feelings that make your memories vivid and meaningful.
-              </p>
-            </div>
-
-            <div className="journey-step">
-              <BookIcon className="step-icon" />
-              <h3 className="step-title">We craft your chapters</h3>
-              <p className="step-description">
-                Your memories become beautifully written chapters. You'll review each one,
-                and we'll revise until it feels right. When you're ready, we'll create your book.
-              </p>
+              <div className="step-content">
+                <h3 className="step-title">We craft your chapters</h3>
+                <p className="step-description">
+                  Your memories become beautifully written chapters. You'll review each one,
+                  and we'll revise until it feels right. When you're ready, we'll create your book.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -115,26 +138,19 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Gentle CTA */}
-      <section className="cta">
-        <div className="cta-content">
-          <h2 className="cta-title">Ready to begin?</h2>
-          <p className="cta-text">
-            Join others who are preserving their life stories for future generations.
-            Take all the time you need—your memories aren't going anywhere.
-          </p>
-          <Link to="/signup" className="btn btn-primary btn-large">
-            Start your memoir
-          </Link>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="footer">
         <p className="footer-text">
-          © 2025 Digital Memoir Platform. Your memories, your voice, your legacy.
+          © 2025 Everbound. Your memories, your voice, your legacy.
         </p>
       </footer>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode={authMode}
+      />
     </div>
   )
 }

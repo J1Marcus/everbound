@@ -218,7 +218,7 @@
 - project is NOT running locally. You must use ssh to view server or logs
 - use docker ps to verify server is running 
 - to deploy run ./deploy.sh locally
-- production server url is server.cedarheightsmusicacademy.com
+- production server url is server.memoirs.com
 - you can ssh in using `ssh chma` but you must ssh for each command. Persistent tunnelling is not possible
 - You must ssh for each command. SSH tunnels do not work is this dev env
 - production files are in `~/opt/chma/`

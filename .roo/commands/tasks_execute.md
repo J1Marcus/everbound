@@ -129,7 +129,7 @@ Provide subagents with:
 ### API Integration Failures
 **Symptoms**: 404, 401, 500 errors during testing
 **Solutions**: 
-1. Verify endpoint URLs: `https://api.cedarheightsmusicacademy.com/api/v1/`
+1. Verify endpoint URLs: `https://api.memoirs.com/api/v1/`
 2. Check authentication: JWT token format and Authorization header
 3. Test with curl first: `curl -H "Authorization: Bearer [TOKEN]" [ENDPOINT]`
 4. Validate request/response data structures against existing patterns
@@ -209,7 +209,7 @@ update_todo_list                  # Track progress milestones
 
 ### Environment Reminders
 - **Docker Environment**: Never use `npm run dev` - use deploy/test production
-- **API Base URL**: `https://api.cedarheightsmusicacademy.com`
+- **API Base URL**: `https://api.memoirs.com`
 - **Server Check**: `curl -s -o /dev/null -w "%{http_code}" http://localhost:5173`
 - **Pattern Priority**: Always use existing services, hooks, and utilities
 
