@@ -28,9 +28,13 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signup' }: A
       setPassword('')
       setConfirmPassword('')
       setError('')
-      setMode(initialMode)
     }
-  }, [isOpen, initialMode])
+  }, [isOpen])
+
+  // Update mode when initialMode changes
+  useEffect(() => {
+    setMode(initialMode)
+  }, [initialMode])
 
   useEffect(() => {
     setError('')

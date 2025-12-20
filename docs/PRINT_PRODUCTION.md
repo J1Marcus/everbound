@@ -43,10 +43,10 @@ A manuscript is considered print-ready when:
 - **Use Case:** Standard memoir, autobiography
 - **Page Count Range:** 100-600 pages
 - **Spine Width:** Calculated based on page count and paper type
-- **Recommended For:** Most memoirs
+- **Recommended For:** Most everbound
 
 **Advantages:**
-- Industry standard for memoirs
+- Industry standard for everbound
 - Cost-effective printing
 - Comfortable reading size
 - Wide printer support
@@ -54,10 +54,10 @@ A manuscript is considered print-ready when:
 #### 7" × 10" (Large Format)
 **Specifications:**
 - **Dimensions:** 7 inches wide × 10 inches tall
-- **Use Case:** Photo-heavy memoirs, family histories
+- **Use Case:** Photo-heavy everbound, family histories
 - **Page Count Range:** 100-400 pages
 - **Spine Width:** Calculated based on page count and paper type
-- **Recommended For:** Memoirs with many photos
+- **Recommended For:** everbound with many photos
 
 **Advantages:**
 - More space for photos
@@ -71,7 +71,7 @@ A manuscript is considered print-ready when:
 - **Use Case:** Comprehensive family histories, photo albums
 - **Page Count Range:** 50-300 pages
 - **Spine Width:** Calculated based on page count and paper type
-- **Recommended For:** Photo-centric memoirs
+- **Recommended For:** Photo-centric everbound
 
 **Advantages:**
 - Maximum photo size
@@ -419,7 +419,7 @@ def validate_photo_quality(photo, print_size):
 - Reduces glare
 - Ages well
 
-**Recommended For:** Text-heavy memoirs
+**Recommended For:** Text-heavy everbound
 
 #### White Paper
 **Specifications:**
@@ -434,7 +434,7 @@ def validate_photo_quality(photo, print_size):
 - Higher contrast for text
 - Professional appearance
 
-**Recommended For:** Photo-heavy memoirs
+**Recommended For:** Photo-heavy everbound
 
 ### 6.2 Binding Types
 
@@ -451,7 +451,7 @@ def validate_photo_quality(photo, print_size):
 - Heirloom quality
 - Professional appearance
 
-**Recommended For:** All memoirs (default)
+**Recommended For:** All everbound (default)
 
 #### Paperback (Perfect Bound)
 **Specifications:**
@@ -473,7 +473,7 @@ def validate_photo_quality(photo, print_size):
 - Non-reflective surface
 - Elegant, sophisticated look
 - Fingerprint resistant
-- Recommended for most memoirs
+- Recommended for most everbound
 
 **Glossy Finish:**
 - Reflective surface

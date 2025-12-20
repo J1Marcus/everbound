@@ -1,46 +1,67 @@
 # Digital Memoir Platform - Deployment Guide
 
-**Version:** 1.0  
-**Last Updated:** 2025-12-19  
+**Version:** 2.0
+**Last Updated:** 2025-12-19
 **Status:** Authoritative
 
 ## Document Purpose
 
-This document provides comprehensive deployment procedures for the Digital Memoir Platform across different environments.
+This document provides comprehensive deployment procedures for the Digital Memoir Platform Progressive Web App (PWA) and Supabase backend across different environments.
+
+> **📱 PWA Deployment:** This platform is a Progressive Web App requiring HTTPS for full functionality. See section 6 for PWA-specific deployment requirements.
 
 ---
 
 ## 1. Deployment Overview
 
-### 1.1 Deployment Environments
+### 1.1 Architecture Components
+
+**Frontend (Progressive Web App):**
+- React + TypeScript + Vite
+- Static files (HTML, CSS, JS)
+- Service Worker for offline support
+- Web App Manifest
+- Deployed to CDN/Static hosting
+
+**Backend (Supabase):**
+- PostgreSQL database
+- PostgREST API
+- Edge Functions
+- Storage
+- Self-hosted or Supabase Cloud
+
+### 1.2 Deployment Environments
 
 **Development:**
 - Local development machines
-- Feature testing
-- Rapid iteration
-- No production data
+- Local Supabase via Docker
+- Vite dev server (http://localhost:5173)
+- Feature testing and rapid iteration
 
 **Staging:**
 - Pre-production environment
-- Integration testing
-- User acceptance testing
-- Production-like configuration
+- Staging Supabase instance
+- Preview deployment (Vercel/Netlify)
+- Integration and UAT testing
 
 **Production:**
 - Live user-facing environment
-- High availability
-- Performance optimized
+- Production Supabase instance
+- CDN-hosted static files with HTTPS
 - Full monitoring and backup
 
-### 1.2 Deployment Strategy
+### 1.3 Deployment Strategy
 
-**Approach:** Blue-Green Deployment with Rolling Updates
+**Frontend:** Static hosting with CDN (Vercel, Netlify, Cloudflare Pages)
+
+**Backend:** Supabase Cloud or self-hosted Docker
 
 **Benefits:**
 - Zero-downtime deployments
+- Automatic HTTPS (required for PWA)
+- Global CDN distribution
 - Easy rollback capability
-- Reduced risk
-- Gradual traffic shifting
+- Instant cache invalidation
 
 ---
 
@@ -246,28 +267,145 @@ curl https://api.yourdomain.com/health
 }
 ```
 
-### 4.2 Frontend Deployment
+### 4.2 Frontend (PWA) Deployment
 
 #### 4.2.1 Build Process
 
 ```bash
-# 1. Install dependencies
+# 1. Navigate to frontend
 cd frontend
+
+# 2. Install dependencies
 npm ci
 
-# 2. Build production bundle
+# 3. Set environment variables
+cp .env.example .env
+# Edit .env with production Supabase URL and keys
+
+# 4. Build production bundle
 npm run build
 
-# 3. Verify build
+# 5. Verify build output
 ls -lh dist/
+# Should include:
+# - index.html
+# - assets/ (CSS, JS bundles)
+# - manifest.json
+# - service-worker.js
+# - icons/ (8 PWA icon sizes)
 
-# 4. Test build locally
+# 6. Test build locally (requires HTTPS for full PWA features)
 npm run preview
 ```
 
-#### 4.2.2 Deployment to CDN
+#### 4.2.2 PWA Pre-Deployment Checklist
 
-**Using Cloudflare Pages:**
+- [ ] All 8 icon sizes generated (72px - 512px)
+- [ ] manifest.json configured with production URLs
+- [ ] Service worker registered in index.html
+- [ ] HTTPS enabled (required for PWA)
+- [ ] Environment variables set for production
+- [ ] Lighthouse PWA audit score 100/100
+
+#### 4.2.3 Deployment to Vercel (Recommended)
+
+**Why Vercel:**
+- ✅ Automatic HTTPS (required for PWA)
+- ✅ Global CDN
+- ✅ Zero-config deployment
+- ✅ Preview deployments for PRs
+- ✅ Automatic cache invalidation
+
+```bash
+# 1. Install Vercel CLI
+npm install -g vercel
+
+# 2. Login
+vercel login
+
+# 3. Configure project (first time only)
+vercel
+
+# 4. Deploy to production
+vercel --prod
+
+# 5. Verify PWA features
+# Visit https://your-app.vercel.app
+# Check: Install prompt, offline mode, service worker
+```
+
+**Vercel Configuration (vercel.json):**
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "headers": [
+    {
+      "source": "/service-worker.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/manifest.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### 4.2.4 Deployment to Netlify
+
+```bash
+# 1. Install Netlify CLI
+npm install -g netlify-cli
+
+# 2. Login
+netlify login
+
+# 3. Initialize site
+netlify init
+
+# 4. Deploy
+netlify deploy --prod
+
+# 5. Verify deployment
+curl https://your-app.netlify.app
+```
+
+**Netlify Configuration (netlify.toml):**
+```toml
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+#### 4.2.5 Deployment to Cloudflare Pages
+
 ```bash
 # 1. Install Wrangler CLI
 npm install -g wrangler
@@ -276,39 +414,30 @@ npm install -g wrangler
 wrangler login
 
 # 3. Deploy
-wrangler pages publish dist/ --project-name memoir-platform
+wrangler pages publish dist/ --project-name everbound
 
 # 4. Verify deployment
-curl https://memoir-platform.pages.dev
+curl https://everbound.pages.dev
 ```
 
-**Using Vercel:**
+#### 4.2.6 Custom Domain Setup
+
+**Vercel:**
 ```bash
-# 1. Install Vercel CLI
-npm install -g vercel
+# Add custom domain
+vercel domains add yourdomain.com
 
-# 2. Login
-vercel login
-
-# 3. Deploy
-vercel --prod
-
-# 4. Verify deployment
-curl https://memoir-platform.vercel.app
+# Configure DNS
+# Add CNAME record: www -> cname.vercel-dns.com
+# Add A record: @ -> 76.76.21.21
 ```
 
-**Using AWS S3 + CloudFront:**
+**Netlify:**
 ```bash
-# 1. Sync to S3
-aws s3 sync dist/ s3://memoir-platform-frontend/ --delete
+# Add custom domain
+netlify domains:add yourdomain.com
 
-# 2. Invalidate CloudFront cache
-aws cloudfront create-invalidation \
-  --distribution-id YOUR_DISTRIBUTION_ID \
-  --paths "/*"
-
-# 3. Verify deployment
-curl https://yourdomain.com
+# Netlify provides DNS instructions
 ```
 
 ### 4.3 Worker Deployment
@@ -329,9 +458,88 @@ celery -A app.celery inspect stats
 
 ---
 
-## 5. Environment-Specific Deployments
+## 5. PWA-Specific Deployment
 
-### 5.1 Development Deployment
+### 5.1 HTTPS Requirement
+
+**Critical:** PWAs require HTTPS (except localhost)
+
+**Automatic HTTPS Providers:**
+- ✅ Vercel
+- ✅ Netlify
+- ✅ Cloudflare Pages
+- ✅ GitHub Pages (with custom domain)
+
+**Custom Server:**
+```bash
+# Use Let's Encrypt for free SSL
+sudo certbot certonly --standalone -d yourdomain.com
+sudo certbot renew --dry-run  # Test auto-renewal
+```
+
+### 5.2 Service Worker Deployment
+
+**Important Considerations:**
+
+1. **Cache Versioning:**
+   ```javascript
+   // Update version on each deployment
+   const CACHE_NAME = 'everbound-v2';  // Increment version
+   ```
+
+2. **Cache Headers:**
+   ```nginx
+   # Service worker should not be cached
+   location /service-worker.js {
+     add_header Cache-Control "public, max-age=0, must-revalidate";
+   }
+   ```
+
+3. **Update Strategy:**
+   - Service worker updates automatically
+   - Users get new version on next visit
+   - Old cache cleared automatically
+
+### 5.3 PWA Testing Post-Deployment
+
+```bash
+# 1. Run Lighthouse audit
+lighthouse https://yourdomain.com \
+  --only-categories=pwa \
+  --view
+
+# 2. Check PWA score (target: 100/100)
+
+# 3. Test on real devices
+# - iOS Safari: Manual "Add to Home Screen"
+# - Android Chrome: Automatic install prompt
+# - Desktop Chrome: Install icon in address bar
+
+# 4. Verify offline functionality
+# - Open app
+# - Go offline (airplane mode)
+# - Navigate between cached pages
+# - Verify offline fallback works
+```
+
+### 5.4 PWA Deployment Checklist
+
+- [ ] HTTPS enabled and working
+- [ ] All icon sizes present and loading
+- [ ] manifest.json accessible at /manifest.json
+- [ ] Service worker registers successfully
+- [ ] Offline page works
+- [ ] Install prompt appears (Chrome/Edge)
+- [ ] App installs successfully
+- [ ] Standalone mode works (no browser UI)
+- [ ] Theme color applies correctly
+- [ ] Lighthouse PWA score: 100/100
+
+---
+
+## 6. Environment-Specific Deployments
+
+### 6.1 Development Deployment
 
 **Purpose:** Local development and testing
 
@@ -360,7 +568,7 @@ API_URL=http://localhost:8000
 FRONTEND_URL=http://localhost:3000
 ```
 
-### 5.2 Staging Deployment
+### 6.2 Staging Deployment
 
 **Purpose:** Pre-production testing and validation
 
@@ -396,7 +604,7 @@ FRONTEND_URL=https://staging.yourdomain.com
 - [ ] Performance acceptable
 - [ ] No errors in logs
 
-### 5.3 Production Deployment
+### 6.3 Production Deployment
 
 **Purpose:** Live user-facing environment
 

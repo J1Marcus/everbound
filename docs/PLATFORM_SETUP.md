@@ -86,7 +86,7 @@ nano .env  # or use your preferred editor
 **Required Environment Variables (docker/.env):**
 ```bash
 # Project Configuration
-PROJECT_NAME=memoirs_dev
+PROJECT_NAME=everbound_dev
 ENVIRONMENT=development
 
 # Database

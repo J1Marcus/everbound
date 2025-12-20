@@ -7,7 +7,6 @@ import type { Database } from '../types/database.types'
 
 type BookType = 'individual_memoir' | 'family_memoir'
 type TargetLength = 'short' | 'standard' | 'extended'
-type ProjectInsert = Database['public']['Tables']['projects']['Insert']
 type Project = Database['public']['Tables']['projects']['Row']
 
 export default function ProjectCreatePage() {
@@ -69,8 +68,8 @@ export default function ProjectCreatePage() {
       if (createError) throw createError
 
       if (data) {
-        // Navigate to voice calibration for the new project
-        navigate(`/projects/${(data as Project).id}/voice-calibration`)
+        // Navigate to ghostwriter profile setup for the new project
+        navigate(`/ghostwriter/profile-setup/${(data as Project).id}`)
       }
     } catch (err) {
       console.error('Error creating project:', err)

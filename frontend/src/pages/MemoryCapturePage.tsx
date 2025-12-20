@@ -10,7 +10,7 @@ type Confidence = 'low' | 'medium' | 'high'
 
 export default function MemoryCapturePage() {
   const { projectId } = useParams<{ projectId: string }>()
-  const [inputType, setInputType] = useState<InputType>('text')
+  const [inputType] = useState<InputType>('text')
   const [content, setContent] = useState('')
   const [dateType, setDateType] = useState<'specific' | 'life_stage' | 'approximate'>('life_stage')
   const [specificDate, setSpecificDate] = useState({ month: '', day: '', year: '' })

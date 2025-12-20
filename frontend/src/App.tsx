@@ -4,18 +4,24 @@ import { useAuthStore } from './stores/authStore'
 
 // Pages
 import LandingPage from './pages/LandingPage'
-import SignInPage from './pages/SignInPage'
 import SignUpPage from './pages/SignUpPage'
 import DashboardPage from './pages/DashboardPage'
 import ProjectCreatePage from './pages/ProjectCreatePage'
-import VoiceCalibrationPage from './pages/VoiceCalibrationPage'
 import MemoryCapturePage from './pages/MemoryCapturePage'
 import ChapterOverviewPage from './pages/ChapterOverviewPage'
 import ChapterReviewPage from './pages/ChapterReviewPage'
 
+// Ghostwriter Pages
+import { ProfileSetupPage } from './pages/ghostwriter/ProfileSetupPage'
+import { SectionRoadmapPage } from './pages/ghostwriter/SectionRoadmapPage'
+import { PromptCapturePage } from './pages/ghostwriter/PromptCapturePage'
+import { SynthesisPreviewPage } from './pages/ghostwriter/SynthesisPreviewPage'
+import { BookSynthesisPage } from './pages/ghostwriter/BookSynthesisPage'
+
 // Components
 import LoadingSpinner from './components/LoadingSpinner'
 import ProtectedRoute from './components/ProtectedRoute'
+import PWAInstallPrompt from './components/PWAInstallPrompt'
 
 function App() {
   const { initialize, initialized, loading } = useAuthStore()
@@ -34,10 +40,12 @@ function App() {
 
   return (
     <BrowserRouter>
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
+      
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
 
         {/* Protected Routes */}
@@ -62,14 +70,6 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/projects/:projectId/voice-calibration"
-          element={
-            <ProtectedRoute>
-              <VoiceCalibrationPage />
             </ProtectedRoute>
           }
         />
@@ -102,6 +102,56 @@ function App() {
           element={
             <ProtectedRoute>
               <ChapterReviewPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Ghostwriter Routes */}
+        <Route
+          path="/ghostwriter/profile-setup/:projectId"
+          element={
+            <ProtectedRoute>
+              <ProfileSetupPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ghostwriter/roadmap/:projectId"
+          element={
+            <ProtectedRoute>
+              <SectionRoadmapPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ghostwriter/section/:sectionId"
+          element={
+            <ProtectedRoute>
+              <PromptCapturePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ghostwriter/section/:sectionId/prompt/:promptId"
+          element={
+            <ProtectedRoute>
+              <PromptCapturePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ghostwriter/synthesis/:sectionId"
+          element={
+            <ProtectedRoute>
+              <SynthesisPreviewPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ghostwriter/book-synthesis/:projectId"
+          element={
+            <ProtectedRoute>
+              <BookSynthesisPage />
             </ProtectedRoute>
           }
         />

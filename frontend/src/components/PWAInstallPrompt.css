@@ -1,0 +1,156 @@
+/**
+ * PWA Install Prompt
+ * Native-feeling install prompt for Progressive Web App
+ */
+
+.pwa-install-prompt {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  animation: slideUpPrompt 0.3s ease-out;
+}
+
+@media (min-width: 640px) {
+  .pwa-install-prompt {
+    bottom: var(--space-lg);
+    left: var(--space-lg);
+    right: auto;
+    max-width: 400px;
+  }
+}
+
+@keyframes slideUpPrompt {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.pwa-prompt-content {
+  background-color: var(--color-paper);
+  border: 2px solid var(--color-stone);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-lg);
+  position: relative;
+}
+
+@media (min-width: 640px) {
+  .pwa-prompt-content {
+    border-radius: var(--radius-lg);
+  }
+}
+
+.pwa-prompt-close {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-slate);
+  cursor: pointer;
+  padding: var(--space-xs);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.pwa-prompt-close:hover {
+  background-color: var(--color-linen);
+  color: var(--color-ink);
+}
+
+.pwa-prompt-close:focus-visible {
+  outline: 3px solid var(--color-amber);
+  outline-offset: 2px;
+}
+
+.pwa-prompt-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+
+.pwa-prompt-icon img {
+  height: 64px;
+  width: auto;
+}
+
+.pwa-prompt-text {
+  text-align: center;
+  margin-bottom: var(--space-lg);
+}
+
+.pwa-prompt-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-h2);
+  font-weight: var(--font-semibold);
+  color: var(--color-ink);
+  margin-bottom: var(--space-sm);
+}
+
+.pwa-prompt-description {
+  font-family: var(--font-sans);
+  font-size: var(--text-body-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-slate);
+  margin: 0;
+}
+
+.pwa-prompt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 640px) {
+  .pwa-prompt-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.pwa-install-button {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .pwa-install-button {
+    width: auto;
+    min-width: 140px;
+  }
+}
+
+.pwa-dismiss-button {
+  width: 100%;
+  justify-content: center;
+  min-height: 48px;
+  border: none;
+}
+
+@media (min-width: 640px) {
+  .pwa-dismiss-button {
+    width: auto;
+    min-width: 100px;
+  }
+}
+
+/* iOS-specific styles */
+@supports (-webkit-touch-callout: none) {
+  .pwa-prompt-content {
+    padding-bottom: max(var(--space-lg), env(safe-area-inset-bottom));
+  }
+}

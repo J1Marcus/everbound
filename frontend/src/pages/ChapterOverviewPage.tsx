@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import LoadingSpinner from '../components/LoadingSpinner'
 import type { Database } from '../types/database.types'
+import { hasMockSynthesis } from '../data/mockSynthesisData'
 
 type Chapter = Database['public']['Tables']['chapters']['Row']
 
@@ -35,7 +36,26 @@ export default function ChapterOverviewPage() {
 
       if (fetchError) throw fetchError
 
-      setChapters(data || [])
+      let chapters = data || []
+      
+      // If no chapters exist, add mock chapter 1 if mock data is available
+      if (chapters.length === 0 && hasMockSynthesis('origins')) {
+        chapters = [{
+          id: 'chapter-1',
+          project_id: projectId,
+          manuscript_id: null,
+          chapter_number: 1,
+          title: 'Where It All Started',
+          content: null,
+          component_ids: [],
+          word_count: 2150,
+          status: 'approved',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        } as Chapter]
+      }
+
+      setChapters(chapters)
     } catch (err) {
       console.error('Error fetching chapters:', err)
       setError('Failed to load chapters')

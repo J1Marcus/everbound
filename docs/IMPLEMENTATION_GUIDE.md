@@ -1,31 +1,35 @@
-# Digital Memoir Platform - Technical Implementation Guide (Legacy)
+# Digital Memoir Platform - Technical Implementation Guide
 
-**Version:** 1.0
+**Version:** 2.0
 **Last Updated:** 2025-12-19
-**Status:** Reference Only - See SUPABASE_ARCHITECTURE.md
+**Status:** Current Implementation
 
-> **⚠️ IMPORTANT:** This document describes a custom backend implementation that is **NOT** being used for this project.
+> **✅ CURRENT IMPLEMENTATION:** This project uses **Supabase** with a **Progressive Web App (PWA)** frontend.
 >
-> **For the actual implementation approach, see:** [`SUPABASE_ARCHITECTURE.md`](SUPABASE_ARCHITECTURE.md)
+> **Architecture Overview:**
+> - **Frontend**: React + TypeScript + Vite (Progressive Web App)
+> - **Database**: PostgreSQL with RLS policies (Supabase)
+> - **API**: PostgREST auto-generated + Edge Functions
+> - **Auth**: GoTrue built-in (Supabase Auth)
+> - **Storage**: Supabase Storage API
+> - **Platform**: PWA (installable on mobile and desktop)
 >
-> This project uses **Supabase** which changes the implementation approach:
-> - **Database**: PostgreSQL with RLS policies (not custom API layer)
-> - **API**: PostgREST auto-generated + Edge Functions (not FastAPI/NestJS)
-> - **Auth**: GoTrue built-in (not custom JWT implementation)
-> - **Real-time**: Supabase Realtime (not custom WebSocket)
-> - **Storage**: Supabase Storage API (not custom S3 integration)
->
-> **Key Implementation Differences:**
-> - Business logic goes in Edge Functions (Deno/TypeScript) instead of Python/Node backend
-> - Database functions and triggers handle automated workflows
-> - RLS policies enforce security at the database level
+> **Key Implementation Approach:**
+> - Business logic in Edge Functions (Deno/TypeScript)
+> - Database functions and triggers for automated workflows
+> - RLS policies for security at database level
 > - Frontend uses Supabase client for direct database access
+> - Mobile-first responsive design
+> - Offline capability via service workers
 >
-> This document is kept for reference to understand the business logic requirements (voice analysis, quality gates, etc.), which are implemented as Edge Functions in the Supabase architecture.
+> **Related Documentation:**
+> - [`SUPABASE_ARCHITECTURE.md`](SUPABASE_ARCHITECTURE.md) - Backend architecture
+> - [`PWA_IMPLEMENTATION.md`](PWA_IMPLEMENTATION.md) - PWA features and setup
+> - [`MOBILE_OPTIMIZATION.md`](MOBILE_OPTIMIZATION.md) - Mobile UI optimizations
 
 ## Document Purpose
 
-This document provides conceptual implementation guidance. The actual implementation uses Supabase - see [`SUPABASE_ARCHITECTURE.md`](SUPABASE_ARCHITECTURE.md) sections 5-7 for Edge Function implementation patterns.
+This document provides technical implementation guidance for the Digital Memoir Platform, focusing on the Progressive Web App frontend and Supabase backend integration. For detailed backend architecture, see [`SUPABASE_ARCHITECTURE.md`](SUPABASE_ARCHITECTURE.md).
 
 ---
 
@@ -34,12 +38,26 @@ This document provides conceptual implementation guidance. The actual implementa
 ### 1.1 Development Principles
 
 1. **Print-First Implementation:** Every feature must support print outcome
-2. **Quality-First Development:** Never compromise narrative quality for speed
-3. **Voice Preservation:** Maintain narrator authenticity throughout
-4. **Assembly-Based Architecture:** Build systems for component assembly, not direct generation
-5. **Blocking Quality Gates:** Enforce quality standards without bypass options
+2. **Mobile-First Design:** Optimized for mobile devices, enhanced for desktop
+3. **Progressive Enhancement:** Core features work everywhere, enhanced features where supported
+4. **Quality-First Development:** Never compromise narrative quality for speed
+5. **Voice Preservation:** Maintain narrator authenticity throughout
+6. **Assembly-Based Architecture:** Build systems for component assembly, not direct generation
+7. **Blocking Quality Gates:** Enforce quality standards without bypass options
 
-### 1.2 Technology Stack (Supabase-Based)
+### 1.2 Technology Stack
+
+**Frontend (Progressive Web App):**
+- **Framework:** React 18+ with TypeScript
+- **Build Tool:** Vite 5+
+- **UI Library:** Tailwind CSS with custom design system
+- **State Management:** Zustand
+- **Supabase Client:** @supabase/supabase-js
+- **PWA Features:**
+  - Service Worker for offline support
+  - Web App Manifest for installation
+  - Cache API for asset caching
+  - IndexedDB for offline data storage
 
 **Backend (Supabase):**
 - **Database:** PostgreSQL 15+ (via Supabase)
@@ -49,23 +67,36 @@ This document provides conceptual implementation guidance. The actual implementa
 - **Storage:** Supabase Storage (S3-compatible)
 - **Real-time:** Supabase Realtime
 
-**Frontend:**
-- **Framework:** React 18+ with TypeScript
-- **Supabase Client:** @supabase/supabase-js
-- **State Management:** Zustand or React Query
-- **UI Library:** Tailwind CSS with custom components
-- **Build Tool:** Vite
-
 **AI/ML (in Edge Functions):**
 - **LLM:** OpenAI GPT-4, Anthropic Claude
 - **NLP:** Call external APIs from Edge Functions
 - **Speech-to-Text:** OpenAI Whisper API
 
 **Infrastructure:**
-- **Containerization:** Docker (for self-hosted Supabase)
-- **Orchestration:** Docker Compose
-- **Deployment:** See [`PLATFORM_DEPLOYMENT.md`](PLATFORM_DEPLOYMENT.md)
+- **Development:** Local Supabase via Docker Compose
+- **Production:** Supabase Cloud or self-hosted
+- **Deployment:** Vercel, Netlify, or static hosting with HTTPS
 - **Monitoring:** Supabase Analytics + custom logging
+
+### 1.3 Progressive Web App Features
+
+**Implemented:**
+- ✅ Web App Manifest with 8 icon sizes
+- ✅ Service Worker with offline support
+- ✅ Install prompt component
+- ✅ Mobile-first responsive design
+- ✅ Touch-optimized interactions
+- ✅ Bottom sheet modals for mobile
+- ✅ Mobile bottom navigation
+
+**Planned:**
+- 🔄 Push notifications
+- 🔄 Background sync
+- 🔄 Advanced offline editing
+- 🔄 Share target API
+- 🔄 App shortcuts
+
+**See:** [`PWA_IMPLEMENTATION.md`](PWA_IMPLEMENTATION.md) for complete PWA documentation
 
 ---
 

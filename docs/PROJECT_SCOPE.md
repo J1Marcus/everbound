@@ -1,7 +1,7 @@
 # Digital Memoir Platform - Project Scope
 
-**Version:** 1.0  
-**Last Updated:** 2025-12-19  
+**Version:** 1.1
+**Last Updated:** 2025-12-19
 **Status:** Authoritative
 
 ## Document Purpose
@@ -12,10 +12,11 @@ This document defines the complete project scope for the Digital Memoir Platform
 
 ## 1. Executive Summary
 
-The Digital Memoir Platform is a self-serve digital storytelling system designed to transform fragmented personal memories into cohesive, professionally structured hardcover books. The platform prioritizes narrative quality, emotional coherence, and print readiness as first-class requirements.
+The Digital Memoir Platform is a self-serve digital storytelling system designed to transform fragmented personal memories into cohesive, professionally structured hardcover books. The platform is delivered as a **Progressive Web App (PWA)** that works seamlessly across web browsers and mobile devices, prioritizing narrative quality, emotional coherence, and print readiness as first-class requirements.
 
-**Primary Artifact:** Professionally printed hardcover book  
-**Primary Goal:** Transform memory fragments into intentionally authored narratives  
+**Primary Artifact:** Professionally printed hardcover book
+**Primary Goal:** Transform memory fragments into intentionally authored narratives
+**Platform Type:** Progressive Web App (installable on mobile and desktop)
 **Core Constraint:** Every feature must directly contribute to narrative quality or print outcome
 
 ---
@@ -25,12 +26,21 @@ The Digital Memoir Platform is a self-serve digital storytelling system designed
 ### 2.1 Core Purpose
 Transform fragmented personal memories into cohesive, readable narratives that feel intentionally authored rather than transcribed. The end product is a professionally structured book, not a journal export or collection of dictated responses.
 
-### 2.2 Guiding Principles
+### 2.2 Platform Delivery
+The platform is delivered as a **Progressive Web App (PWA)** providing:
+- **Cross-Platform Access:** Works on iOS, Android, and desktop browsers
+- **Installable Experience:** Can be installed like a native app on any device
+- **Offline Capability:** Core features available without internet connection
+- **Mobile-First Design:** Optimized for mobile devices while maintaining desktop functionality
+- **No App Store Required:** Direct access via web browser, optional installation
+
+### 2.3 Guiding Principles
 1. **Print-First Design:** The hardcover book is the primary artifact; digital experience exists solely to enable its creation
-2. **Quality Over Speed:** Narrative quality and emotional coherence are never compromised for faster output
-3. **Voice Preservation:** The system adapts to the narrator's voice; the narrator never adapts to the system
-4. **Intentional Authorship:** Output must feel authored, not transcribed or generated
-5. **Completion-Oriented:** Each project has a defined beginning and end
+2. **Mobile-First Approach:** Optimized for mobile capture and review, accessible anywhere
+3. **Quality Over Speed:** Narrative quality and emotional coherence are never compromised for faster output
+4. **Voice Preservation:** The system adapts to the narrator's voice; the narrator never adapts to the system
+5. **Intentional Authorship:** Output must feel authored, not transcribed or generated
+6. **Completion-Oriented:** Each project has a defined beginning and end
 
 ---
 
@@ -110,13 +120,13 @@ Validated components include:
 ## 5. Input Philosophy
 
 ### 5.1 Input Format
-Inputs are captured as **short, specific memory fragments** rather than long essays.
+Inputs are captured as **short, specific memory fragments** rather than long essays, optimized for mobile capture.
 
 **Supported Input Types:**
-- Short text entries (micro-narratives)
-- Voice dictation (treated as source material, not output)
-- Photos with contextual prompts
-- Approximate dates or life stages
+- Short text entries (micro-narratives) - mobile-optimized input
+- Voice dictation (treated as source material, not output) - mobile voice recording
+- Photos with contextual prompts - mobile camera integration
+- Approximate dates or life stages - mobile-friendly date pickers
 
 ### 5.2 Input Characteristics
 The system favors:
@@ -353,6 +363,10 @@ A manuscript that cannot be printed cleanly is considered incomplete.
 ## 12. Scope Boundaries
 
 ### 12.1 In Scope
+- **Progressive Web App (PWA) delivery**
+- **Mobile-first user interface**
+- **Offline capability for core features**
+- **Cross-platform compatibility (iOS, Android, desktop)**
 - Memory fragment capture and organization
 - Voice calibration and preservation
 - Narrative assembly from validated components
@@ -365,6 +379,7 @@ A manuscript that cannot be printed cleanly is considered incomplete.
 - Chapter structure enforcement
 
 ### 12.2 Out of Scope
+- Native mobile apps (iOS App Store, Google Play Store)
 - Real-time collaborative editing
 - Social sharing features
 - Public publishing
@@ -391,6 +406,10 @@ A manuscript that cannot be printed cleanly is considered incomplete.
 ## 13. Project Constraints
 
 ### 13.1 Technical Constraints
+- **Must work as Progressive Web App (PWA)**
+- **Must function on mobile devices (iOS, Android)**
+- **Must provide offline capability for core features**
+- **Must be installable without app stores**
 - Must generate print-ready PDFs
 - Must support professional print specifications
 - Must handle photo resolution requirements
@@ -405,6 +424,10 @@ A manuscript that cannot be printed cleanly is considered incomplete.
 - Preserve authentic voice throughout
 
 ### 13.3 User Experience Constraints
+- **Mobile-first interface design**
+- **Touch-optimized interactions**
+- **Responsive across all screen sizes**
+- **Fast loading on mobile networks**
 - Favor short, specific inputs over long essays
 - Guide users toward sensory detail and concrete moments
 - Provide clear feedback when more input needed

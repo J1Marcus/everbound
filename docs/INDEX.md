@@ -1,16 +1,18 @@
 # Digital Memoir Platform - Documentation Index
 
-**Version:** 1.0  
-**Last Updated:** 2025-12-19  
+**Version:** 1.1
+**Last Updated:** 2025-12-19
 **Status:** Complete
 
 ---
 
 ## Overview
 
-This documentation suite provides complete specifications for the Digital Memoir Platform, a self-serve digital storytelling system designed to transform fragmented personal memories into professionally printed hardcover books.
+This documentation suite provides complete specifications for the Digital Memoir Platform, a **Progressive Web App (PWA)** designed to transform fragmented personal memories into professionally printed hardcover books.
 
+**Platform Type:** Progressive Web App (installable on mobile and desktop)
 **Core Principle:** The hardcover book is the primary artifact. The digital experience exists solely to enable the creation of that artifact.
+**Delivery:** Cross-platform (iOS, Android, Desktop) via web browser with optional installation
 
 ---
 
@@ -23,7 +25,7 @@ These documents define the foundational vision and constraints for the entire pl
 
 **Key Topics:**
 - Product vision and philosophy
-- Supported book types (Individual and Family Memoirs)
+- Supported book types (Individual and Family everbound)
 - Narrative construction model
 - Input philosophy
 - Voice and style preservation
@@ -60,7 +62,7 @@ These documents define the foundational vision and constraints for the entire pl
 **Key Sections:**
 - Executive summary
 - Product vision and guiding principles
-- Supported book types (Individual and Family Memoirs)
+- Supported book types (Individual and Family everbound)
 - Narrative construction model
 - Input philosophy and formats
 - Voice and style preservation
@@ -471,7 +473,7 @@ The system adapts to the narrator's voice; the narrator never adapts to the syst
 The system assembles chapters from validated narrative components. It does not generate books directly from prompts. Generation is blocked if insufficient material exists.
 
 ### 5. Structured Collaboration
-Collaboration occurs through structured contributions, feedback, and approvals. There is no real-time co-editing. In Family Memoirs, perspective differences are preserved, not resolved.
+Collaboration occurs through structured contributions, feedback, and approvals. There is no real-time co-editing. In Family everbound, perspective differences are preserved, not resolved.
 
 ### 6. Completion-Oriented
 Each project has a defined beginning and end. The goal is completion of a finite, high-quality manuscript suitable for print.

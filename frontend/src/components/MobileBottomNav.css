@@ -1,0 +1,106 @@
+/**
+ * Mobile Bottom Navigation
+ * Touch-friendly tab bar for mobile devices
+ */
+
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--color-paper);
+  border-top: 1px solid var(--color-stone);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: var(--space-xs) 0;
+  z-index: 100;
+  box-shadow: 0 -2px 8px rgba(43, 40, 38, 0.08);
+  /* Safe area for devices with notches */
+  padding-bottom: max(var(--space-xs), env(safe-area-inset-bottom));
+}
+
+/* Hide on tablet and desktop */
+@media (min-width: 640px) {
+  .mobile-bottom-nav {
+    display: none;
+  }
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  min-width: 64px;
+  min-height: 56px;
+  color: var(--color-slate);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  position: relative;
+  /* Ensure touch target is large enough */
+  touch-action: manipulation;
+}
+
+.mobile-nav-item:active {
+  transform: scale(0.95);
+  background-color: var(--color-linen);
+}
+
+.mobile-nav-item.active {
+  color: var(--color-amber-dark);
+}
+
+.mobile-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  background-color: var(--color-amber);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.mobile-nav-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: transform var(--transition-fast);
+}
+
+.mobile-nav-item.active .mobile-nav-icon {
+  transform: scale(1.1);
+}
+
+.mobile-nav-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  font-weight: var(--font-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.mobile-nav-item.active .mobile-nav-label {
+  font-weight: var(--font-semibold);
+}
+
+/* Focus styles for accessibility */
+.mobile-nav-item:focus-visible {
+  outline: 3px solid var(--color-amber);
+  outline-offset: 2px;
+}
+
+/* Add padding to page content when bottom nav is present */
+@media (max-width: 640px) {
+  body.has-bottom-nav {
+    padding-bottom: 72px;
+  }
+  
+  body.has-bottom-nav main {
+    padding-bottom: var(--space-xl);
+  }
+}

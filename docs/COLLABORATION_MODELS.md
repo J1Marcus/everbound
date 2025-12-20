@@ -6,7 +6,7 @@
 
 ## Document Purpose
 
-This document defines the complete collaboration models for the Digital Memoir Platform, ensuring family collaboration supports the narrative quality and voice preservation requirements while respecting the distinct rules for Individual and Family Memoirs.
+This document defines the complete collaboration models for the Digital Memoir Platform, ensuring family collaboration supports the narrative quality and voice preservation requirements while respecting the distinct rules for Individual and Family everbound.
 
 ---
 
@@ -14,10 +14,10 @@ This document defines the complete collaboration models for the Digital Memoir P
 
 ### 1.1 Core Principles
 
-1. **Book Type Determines Collaboration Model:** Individual and Family Memoirs have fundamentally different collaboration rules
+1. **Book Type Determines Collaboration Model:** Individual and Family everbound have fundamentally different collaboration rules
 2. **Voice Preservation:** Collaboration never compromises narrator voice authenticity
 3. **Structured Contributions:** No real-time co-editing; all collaboration is structured and trackable
-4. **Perspective Respect:** In Family Memoirs, conflicting memories are preserved, not resolved
+4. **Perspective Respect:** In Family everbound, conflicting memories are preserved, not resolved
 5. **Final Authority:** Clear ownership and approval rights at all times
 
 ### 1.2 Collaboration vs. Real-Time Editing

@@ -1,25 +1,33 @@
-# Digital Memoir Platform - System Architecture (Legacy)
+# Digital Memoir Platform - System Architecture
 
-**Version:** 1.0
+**Version:** 2.0
 **Last Updated:** 2025-12-19
-**Status:** Reference Only - See SUPABASE_ARCHITECTURE.md
+**Status:** Current Implementation
 
-> **⚠️ IMPORTANT:** This document describes a custom Python backend architecture that is **NOT** being used for this project.
+> **✅ CURRENT ARCHITECTURE:** Progressive Web App (PWA) with Supabase Backend
 >
-> **For the actual implementation architecture, see:** [`SUPABASE_ARCHITECTURE.md`](SUPABASE_ARCHITECTURE.md)
+> **Architecture Overview:**
+> - **Frontend**: React PWA (mobile-first, installable)
+> - **Backend**: Supabase (PostgreSQL + Edge Functions)
+> - **Platform**: Cross-platform (iOS, Android, Desktop)
+> - **Deployment**: Static hosting + Supabase Cloud/Self-hosted
 >
-> This project uses a **Supabase-first architecture** with:
-> - PostgreSQL database with Row-Level Security (RLS)
-> - PostgREST for auto-generated REST API
-> - GoTrue for authentication
-> - Edge Functions (Deno) for business logic
-> - Self-hosted via Docker Compose
+> **Key Architectural Decisions:**
+> - Progressive Web App for cross-platform reach
+> - Mobile-first responsive design
+> - Offline-capable with service workers
+> - Direct database access via Supabase client
+> - Edge Functions for business logic
+> - RLS policies for security
 >
-> This document is kept for reference to understand the conceptual service layers and business logic requirements, which are implemented differently in the Supabase architecture.
+> **Related Documentation:**
+> - [`SUPABASE_ARCHITECTURE.md`](SUPABASE_ARCHITECTURE.md) - Backend details
+> - [`PWA_IMPLEMENTATION.md`](PWA_IMPLEMENTATION.md) - PWA architecture
+> - [`MOBILE_OPTIMIZATION.md`](MOBILE_OPTIMIZATION.md) - Mobile design
 
 ## Document Purpose
 
-This document defines a conceptual system architecture for the Digital Memoir Platform. The actual implementation uses Supabase - see [`SUPABASE_ARCHITECTURE.md`](SUPABASE_ARCHITECTURE.md) for the authoritative architecture.
+This document defines the system architecture for the Digital Memoir Platform, focusing on the Progressive Web App frontend and its integration with the Supabase backend. For detailed backend architecture, see [`SUPABASE_ARCHITECTURE.md`](SUPABASE_ARCHITECTURE.md).
 
 ---
 
@@ -28,53 +36,77 @@ This document defines a conceptual system architecture for the Digital Memoir Pl
 ### 1.1 Core Architecture Principles
 
 1. **Print-First Design:** All components optimize for print-ready output
-2. **Quality Gates:** System enforces quality at every stage
-3. **Voice Preservation:** Architecture supports consistent voice across sessions
-4. **Assembly-Based Generation:** Components assemble narratives from validated fragments
-5. **Completion-Oriented:** System guides users toward finished manuscripts
+2. **Mobile-First Approach:** Optimized for mobile devices, enhanced for desktop
+3. **Progressive Enhancement:** Core features work everywhere, enhanced where supported
+4. **Offline-First:** Core features available without internet connection
+5. **Quality Gates:** System enforces quality at every stage
+6. **Voice Preservation:** Architecture supports consistent voice across sessions
+7. **Assembly-Based Generation:** Components assemble narratives from validated fragments
+8. **Completion-Oriented:** System guides users toward finished manuscripts
 
-### 1.2 High-Level Architecture
+### 1.2 High-Level Architecture (PWA + Supabase)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        User Interface Layer                      │
-│  (Web Application - Input Capture, Review, Collaboration)       │
-└────────────────────┬────────────────────────────────────────────┘
-                     │
-┌────────────────────┴────────────────────────────────────────────┐
-│                     Application Services Layer                   │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │   Memory     │  │   Narrative  │  │ Collaboration│         │
-│  │   Capture    │  │   Assembly   │  │   Service    │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │    Voice     │  │   Quality    │  │    Print     │         │
-│  │  Calibration │  │    Gates     │  │  Production  │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-└────────────────────┬────────────────────────────────────────────┘
-                     │
-┌────────────────────┴────────────────────────────────────────────┐
-│                      AI/ML Services Layer                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │   Voice      │  │   Narrative  │  │   Quality    │         │
-│  │   Analysis   │  │   Generation │  │   Analysis   │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │   Tagging    │  │   Timeline   │  │   Emotion    │         │
-│  │   Engine     │  │   Analysis   │  │   Analysis   │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-└────────────────────┬────────────────────────────────────────────┘
-                     │
-┌────────────────────┴────────────────────────────────────────────┐
-│                        Data Layer                                │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │   Memory     │  │   Narrative  │  │    User      │         │
-│  │  Fragments   │  │  Components  │  │   Profiles   │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │   Voice      │  │  Manuscript  │  │    Media     │         │
-│  │   Profiles   │  │    Drafts    │  │   Storage    │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
+│                    Progressive Web App (PWA)                     │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │              User Interface Layer (React)                │   │
+│  │  • Mobile-first responsive design                        │   │
+│  │  • Touch-optimized interactions                          │   │
+│  │  • Bottom sheet modals                                   │   │
+│  │  • Mobile bottom navigation                              │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                              │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │           Service Worker (Offline Support)               │   │
+│  │  • Cache static assets                                   │   │
+│  │  • Offline page fallback                                 │   │
+│  │  • Background sync queue                                 │   │
+│  │  • Push notifications (planned)                          │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                              │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │         Supabase Client (@supabase/supabase-js)          │   │
+│  │  • Authentication                                         │   │
+│  │  • Database queries (PostgREST)                          │   │
+│  │  • Real-time subscriptions                               │   │
+│  │  • Storage operations                                    │   │
+│  │  • Edge Function calls                                   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │ HTTPS
+┌───────────────────────────────┴─────────────────────────────────┐
+│                      Supabase Backend                            │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │              PostgREST API (Auto-generated)              │   │
+│  │  • RESTful endpoints from database schema                │   │
+│  │  • Row-Level Security (RLS) enforcement                  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                              │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │           Edge Functions (Deno/TypeScript)               │   │
+│  │  • Voice analysis                                        │   │
+│  │  • Narrative generation                                  │   │
+│  │  • Quality gates                                         │   │
+│  │  • AI/ML integrations                                    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                              │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │            PostgreSQL Database (15+)                     │   │
+│  │  • Memory fragments                                      │   │
+│  │  • Projects & manuscripts                                │   │
+│  │  • User profiles & voice profiles                        │   │
+│  │  • Chapters & narrative components                       │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                              │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │              Supabase Storage (S3-compatible)            │   │
+│  │  • Photos & images                                       │   │
+│  │  • Voice recordings                                      │   │
+│  │  • Generated PDFs                                        │   │
+│  └─────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -82,19 +114,47 @@ This document defines a conceptual system architecture for the Digital Memoir Pl
 
 ## 2. System Components
 
-### 2.1 User Interface Layer
+### 2.1 Progressive Web App Layer
+
+**Purpose:** Cross-platform user interface with offline capability
+
+**PWA Features:**
+
+#### Web App Manifest
+- **App Identity:** Name, icons, theme colors
+- **Display Mode:** Standalone (no browser chrome)
+- **Orientation:** Any (responsive)
+- **Start URL:** Root path
+- **Icons:** 8 sizes (72px - 512px)
+
+#### Service Worker
+- **Caching Strategy:** Cache-first for assets, network-first for API
+- **Offline Support:** Cached pages and offline fallback
+- **Background Sync:** Queue actions when offline
+- **Update Strategy:** Automatic updates on new version
+
+#### Mobile-First UI
+- **Responsive Design:** Mobile (< 640px), Tablet (640-1024px), Desktop (1024px+)
+- **Touch Optimization:** 48px minimum touch targets
+- **Bottom Sheets:** Mobile-friendly modals
+- **Bottom Navigation:** Mobile navigation bar
+- **Gestures:** Swipe, pull-to-refresh (planned)
+
+### 2.2 User Interface Components
 
 **Purpose:** Capture memory fragments, facilitate review, enable collaboration
 
 **Key Components:**
 
 #### Memory Input Interface
-- **Short Text Entry:** Optimized for micro-narratives (200-500 words)
-- **Voice Recording:** Audio capture with transcription
-- **Photo Upload:** Image upload with contextual prompts
-- **Timeline Anchoring:** Date/life stage selection
+- **Short Text Entry:** Mobile-optimized for micro-narratives (200-500 words)
+- **Voice Recording:** Mobile audio capture with transcription
+- **Photo Upload:** Mobile camera integration with contextual prompts
+- **Timeline Anchoring:** Mobile-friendly date/life stage selection
 
 **Design Constraints:**
+- Mobile-first responsive design
+- Touch-optimized interactions
 - Discourage long essays or stream-of-consciousness
 - Guide users toward sensory detail and specific moments
 - Provide contextual prompts based on life stage
@@ -126,7 +186,7 @@ This document defines a conceptual system architecture for the Digital Memoir Pl
 
 ---
 
-### 2.2 Application Services Layer
+### 2.3 Application Services Layer
 
 #### Memory Capture Service
 

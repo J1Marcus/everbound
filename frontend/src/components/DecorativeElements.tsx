@@ -101,6 +101,36 @@ export const PenIcon = ({ className = "" }) => (
   </svg>
 );
 
+// Lightbulb Icon - For Ideas/Vision
+export const LightbulbIcon = ({ className = "" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 64 64"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {/* Bulb */}
+    <path
+      d="M32 12 Q40 12, 44 20 Q48 28, 44 36 L44 40 Q44 42, 42 42 L22 42 Q20 42, 20 40 L20 36 Q16 28, 20 20 Q24 12, 32 12 Z"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinejoin="round"
+    />
+    {/* Filament */}
+    <path d="M28 20 L32 28 L36 20" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
+    {/* Base threads */}
+    <line x1="24" y1="42" x2="40" y2="42" stroke="currentColor" strokeWidth="2" />
+    <line x1="24" y1="46" x2="40" y2="46" stroke="currentColor" strokeWidth="2" />
+    <line x1="26" y1="50" x2="38" y2="50" stroke="currentColor" strokeWidth="2" />
+    {/* Light rays */}
+    <line x1="32" y1="8" x2="32" y2="4" stroke="currentColor" strokeWidth="1.5" opacity="0.3" strokeLinecap="round" />
+    <line x1="44" y1="14" x2="47" y2="11" stroke="currentColor" strokeWidth="1.5" opacity="0.3" strokeLinecap="round" />
+    <line x1="20" y1="14" x2="17" y2="11" stroke="currentColor" strokeWidth="1.5" opacity="0.3" strokeLinecap="round" />
+    <line x1="48" y1="26" x2="52" y2="26" stroke="currentColor" strokeWidth="1.5" opacity="0.3" strokeLinecap="round" />
+    <line x1="16" y1="26" x2="12" y2="26" stroke="currentColor" strokeWidth="1.5" opacity="0.3" strokeLinecap="round" />
+  </svg>
+);
+
 // Package Icon - For Delivery
 export const PackageIcon = ({ className = "" }) => (
   <svg
@@ -260,6 +290,7 @@ export default {
   BookIcon,
   MicrophoneIcon,
   PenIcon,
+  LightbulbIcon,
   PackageIcon,
   QuoteMark,
   PaperTexture,

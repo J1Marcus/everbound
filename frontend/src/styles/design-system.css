@@ -88,13 +88,18 @@
   
   /* ========================================
      LAYOUT - Optimal Reading & Touch
+     Mobile-first approach with responsive scaling
      ======================================== */
   
   --content-max-width: 680px;
-  --nav-height: 72px;
+  --nav-height: 56px;           /* Mobile: 56px, Desktop: 72px */
   --button-height: 56px;
   --input-height: 56px;
   --touch-target-min: 48px;
+  
+  /* Responsive spacing - scales up on larger screens */
+  --space-page: var(--space-lg);
+  --space-section: var(--space-2xl);
   
   /* ========================================
      BORDER RADIUS - Subtle, Not Playful
@@ -103,6 +108,28 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
+  
+  /* ========================================
+     MOBILE-FIRST RESPONSIVE SCALING
+     ======================================== */
+  
+  /* Mobile breakpoint adjustments (default above) */
+}
+
+/* Tablet breakpoint: 640px - 1024px */
+@media (min-width: 640px) {
+  :root {
+    --space-page: var(--space-xl);
+    --space-section: var(--space-3xl);
+  }
+}
+
+/* Desktop breakpoint: 1024px+ */
+@media (min-width: 1024px) {
+  :root {
+    --nav-height: 72px;
+    --space-page: var(--space-2xl);
+  }
 }
 
 /* ========================================
@@ -382,7 +409,7 @@ a:focus {
   background-color: var(--color-paper);
   border-bottom: 1px solid var(--color-stone);
   height: var(--nav-height);
-  padding: 0 var(--space-lg);
+  padding: 0 var(--space-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -391,7 +418,13 @@ a:focus {
   z-index: 100;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
+  .nav {
+    padding: 0 var(--space-lg);
+  }
+}
+
+@media (min-width: 1024px) {
   .nav {
     padding: 0 var(--space-2xl);
   }
@@ -586,16 +619,68 @@ a:focus {
   display: block;
 }
 
+.tablet-up {
+  display: none;
+}
+
 .desktop-only {
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
+  .tablet-up {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
   .mobile-only {
     display: none;
   }
   
   .desktop-only {
     display: block;
+  }
+}
+
+/* Mobile-specific layout utilities */
+.mobile-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+@media (min-width: 640px) {
+  .mobile-stack {
+    flex-direction: row;
+    gap: var(--space-lg);
+  }
+}
+
+/* Touch-friendly spacing */
+.touch-spacing {
+  padding: var(--space-md);
+}
+
+@media (min-width: 1024px) {
+  .touch-spacing {
+    padding: var(--space-lg);
+  }
+}
+
+/* Compact mobile cards */
+.card-compact {
+  padding: var(--space-md);
+}
+
+@media (min-width: 640px) {
+  .card-compact {
+    padding: var(--space-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-compact {
+    padding: var(--space-xl);
   }
 }

@@ -484,7 +484,7 @@ Recommendation: "Manuscript is heavily positive. Consider including more challen
 - **Classic Arc:** Start positive, face challenges, overcome, end positive
 - **Reflective Arc:** Mixed emotions throughout, ending with wisdom
 - **Journey Arc:** Progression from one emotional state to another
-- **Episodic:** Varied emotions without single arc (acceptable for memoirs)
+- **Episodic:** Varied emotions without single arc (acceptable for everbound)
 
 **Example Arc:**
 ```
@@ -985,7 +985,7 @@ Recommendations (Optional):
 ### 10.3 Exception Handling
 
 **Edge Cases:**
-- Very short memoirs (< 50,000 words): Adjusted thresholds
+- Very short everbound (< 50,000 words): Adjusted thresholds
 - Experimental structures: Manual review option
 - Technical issues: Support escalation
 

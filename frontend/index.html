@@ -2,13 +2,76 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="Everbound - Transform your memories into a beautifully written book your family will treasure" />
+    <meta name="keywords" content="memoir, digital memoir, family history, life story, autobiography, memories, book creation" />
+    <meta name="author" content="Everbound" />
     <title>Everbound - Your Memories, Beautifully Bound</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/logo.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#C17A3A" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#C17A3A" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2B2826" />
+    
+    <!-- Apple iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Everbound" />
+    
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileColor" content="#C17A3A" />
+    <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://everbound.app/" />
+    <meta property="og:title" content="Everbound - Your Memories, Beautifully Bound" />
+    <meta property="og:description" content="Transform your memories into a beautifully written book your family will treasure" />
+    <meta property="og:image" content="/images/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://everbound.app/" />
+    <meta property="twitter:title" content="Everbound - Your Memories, Beautifully Bound" />
+    <meta property="twitter:description" content="Transform your memories into a beautifully written book your family will treasure" />
+    <meta property="twitter:image" content="/images/twitter-image.png" />
+    
+    <!-- Preconnect to improve performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then((registration) => {
+              console.log('Service Worker registered successfully:', registration.scope);
+              
+              // Check for updates periodically
+              setInterval(() => {
+                registration.update();
+              }, 60 * 60 * 1000); // Check every hour
+            })
+            .catch((error) => {
+              console.log('Service Worker registration failed:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

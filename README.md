@@ -34,7 +34,7 @@ Everbound is a digital memoir platform that helps you preserve your life stories
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd Memoirs
+cd everbound
 
 # Install frontend dependencies
 cd frontend
@@ -70,7 +70,7 @@ Supabase Studio will be available at `http://localhost:3000`
 ## Project Structure
 
 ```
-Memoirs/
+everbound/
 ├── frontend/           # React frontend application
 │   ├── src/
 │   │   ├── components/ # Reusable UI components

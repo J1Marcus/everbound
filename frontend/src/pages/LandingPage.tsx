@@ -1,13 +1,10 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import './LandingPage.css'
 import {
   CornerFlourish,
-  SectionDivider,
   MicrophoneIcon,
-  PenIcon,
-  BookIcon,
-  Book3D
+  LightbulbIcon,
+  BookIcon
 } from '../components/DecorativeElements'
 import AuthModal from '../components/AuthModal'
 
@@ -24,6 +21,13 @@ export default function LandingPage() {
         <CornerFlourish className="corner-flourish bottom-right" style={{ position: 'absolute', bottom: 0, right: 0, width: '150px', height: '150px', color: 'var(--color-amber)', opacity: 0.15, transform: 'rotate(180deg)' }} />
         
         <div className="hero-content">
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-xl)' }}>
+            <img
+              src="/images/logo.png"
+              alt="Everbound Logo"
+              style={{ height: '80px', width: 'auto' }}
+            />
+          </div>
           <h1 className="hero-title">YOUR MEMORIES, shaped into a book your family will treasure</h1>
           <p className="hero-subtitle">
             We shape your story into a beautifully written book
@@ -39,7 +43,7 @@ export default function LandingPage() {
           <div className="hero-actions">
             <button
               onClick={() => {
-                setAuthMode('signin')
+                setAuthMode('signup')
                 setIsAuthModalOpen(true)
               }}
               className="btn btn-primary"
@@ -48,7 +52,7 @@ export default function LandingPage() {
             </button>
             <button
               onClick={() => {
-                setAuthMode('signup')
+                setAuthMode('signin')
                 setIsAuthModalOpen(true)
               }}
               className="btn-text"
@@ -70,13 +74,13 @@ export default function LandingPage() {
 
           <div className="journey-steps">
             <div className="journey-step">
-              <PenIcon className="step-icon" />
+              <LightbulbIcon className="step-icon" />
               <div className="step-content">
-                <h3 className="step-title">We learn your writing style</h3>
+                <h3 className="step-title">Start your project</h3>
                 <p className="step-description">
-                  Write a short memory in your own words. We'll learn how you naturally
-                  express yourself—your tone, your rhythm, your way of telling a story—so
-                  your book reads authentically in your voice.
+                  Choose what kind of memoir you want to create—your personal story or a
+                  family memoir with multiple voices. Set your vision for the book, and
+                  we'll guide you from there.
                 </p>
               </div>
             </div>
@@ -84,12 +88,12 @@ export default function LandingPage() {
             <div className="journey-step">
               <MicrophoneIcon className="step-icon" />
               <div className="step-content">
-                <h3 className="step-title">We guide you through your memories</h3>
+                <h3 className="step-title">Share your memories</h3>
                 <p className="step-description">
                   Through thoughtful questions and gentle prompts, we'll help you explore
-                  the moments that shaped you. Like a conversation with a caring interviewer,
-                  we'll ask about the details that bring your stories to life—the sights,
-                  sounds, and feelings that make your memories vivid and meaningful.
+                  the moments that shaped you. Add photos, write or speak your stories, and
+                  share the details that bring your memories to life—the sights, sounds, and
+                  feelings that make them vivid and meaningful.
                 </p>
               </div>
             </div>
@@ -97,10 +101,11 @@ export default function LandingPage() {
             <div className="journey-step">
               <BookIcon className="step-icon" />
               <div className="step-content">
-                <h3 className="step-title">We craft your chapters</h3>
+                <h3 className="step-title">Review & print</h3>
                 <p className="step-description">
-                  Your memories become beautifully written chapters. You'll review each one,
-                  and we'll revise until it feels right. When you're ready, we'll create your book.
+                  Your memories become beautifully written chapters in your authentic voice.
+                  You'll review each one, and we'll revise until it feels right. When you're
+                  ready, we'll create your professionally printed hardcover book.
                 </p>
               </div>
             </div>
@@ -132,7 +137,7 @@ export default function LandingPage() {
               <li>Cream, acid-free paper</li>
               <li>Professional typography</li>
               <li>Your photos woven throughout</li>
-              <li>A book your family will treasure</li>
+              <li>A book your loved ones will treasure</li>
             </ul>
           </div>
         </div>

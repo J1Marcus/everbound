@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 import { supabase } from '../lib/supabase'
 import LoadingSpinner from '../components/LoadingSpinner'
+import CreateProjectModal from '../components/CreateProjectModal'
 import type { Database } from '../types/database.types'
 
 type Project = Database['public']['Tables']['projects']['Row']
@@ -28,7 +29,7 @@ const MOCK_PROJECTS: Project[] = [
     title: 'The Smith Family Chronicles',
     subtitle: 'Three Generations of Stories',
     book_type: 'family_memoir',
-    status: 'assembling',
+    status: 'completed',
     target_page_count: 300,
     target_chapter_count: 18,
     trim_size: '8x10',
@@ -54,6 +55,7 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const { user, signOut } = useAuthStore()
   const navigate = useNavigate()
 
@@ -134,11 +136,27 @@ export default function DashboardPage() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-paper)' }}>
-      {/* Header */}
+      {/* Header - Mobile optimized */}
       <header className="nav">
-        <h1 className="nav-title">Everbound</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-lg)' }}>
-          <span style={{ fontSize: 'var(--text-body-sm)', color: 'var(--color-slate)' }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src="/images/logo.png"
+            alt="Everbound"
+            style={{ height: '48px', width: 'auto', cursor: 'pointer' }}
+            className="desktop-only"
+          />
+          <img
+            src="/images/logo.png"
+            alt="Everbound"
+            style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+            className="mobile-only"
+          />
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+          <span
+            style={{ fontSize: 'var(--text-body-sm)', color: 'var(--color-slate)' }}
+            className="tablet-up"
+          >
             {user?.email}
           </span>
           <button
@@ -146,38 +164,72 @@ export default function DashboardPage() {
             className="btn-text"
             style={{
               minHeight: 'auto',
-              padding: 'var(--space-sm) var(--space-md)',
-              border: 'none'
+              padding: 'var(--space-xs) var(--space-sm)',
+              border: 'none',
+              fontSize: 'var(--text-body-sm)'
             }}
           >
-            Sign Out
+            <span className="mobile-only">Exit</span>
+            <span className="tablet-up">Sign Out</span>
           </button>
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Main Content - Mobile-first padding */}
       <main style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: 'var(--space-2xl) var(--space-lg)'
+        padding: 'var(--space-lg) var(--space-md)',
+        paddingTop: 'calc(var(--space-lg) + 80px)' // Add space for fixed header
       }}>
-        {/* Page Header */}
-        <div style={{ marginBottom: 'var(--space-2xl)' }}>
+        {/* Page Header - Mobile responsive */}
+        <div style={{
+          marginBottom: 'var(--space-xl)',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 'var(--space-md)',
+          flexWrap: 'wrap'
+        }}>
           <h2 style={{
-            fontSize: 'var(--text-display)',
+            fontSize: 'var(--text-h1)',
             fontFamily: 'var(--font-serif)',
             color: 'var(--color-ink)',
-            marginBottom: 'var(--space-sm)'
+            marginBottom: 0
           }}>
             My Projects
           </h2>
-          <p style={{
-            fontSize: 'var(--text-body-lg)',
-            color: 'var(--color-slate)',
-            marginBottom: 0
-          }}>
-            Continue working on your memoirs
-          </p>
+          
+          {/* Desktop create button - inline with title */}
+          {projects.length > 0 && (
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="btn btn-secondary tablet-up"
+              style={{
+                minHeight: '44px',
+                padding: 'var(--space-sm) var(--space-lg)',
+                fontSize: 'var(--text-body)'
+              }}
+            >
+              + Create New Memoir
+            </button>
+          )}
+          
+          {/* Mobile create button - full width below */}
+          {projects.length > 0 && (
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="btn btn-secondary mobile-only"
+              style={{
+                width: '100%',
+                minHeight: '48px',
+                fontSize: 'var(--text-body)'
+              }}
+            >
+              + Create New Memoir
+            </button>
+          )}
         </div>
 
         {/* Error Message */}
@@ -204,12 +256,15 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Projects List */}
-        <div className="stack-lg" style={{ marginBottom: 'var(--space-2xl)' }}>
+        {/* Projects List - Mobile optimized */}
+        <div className="stack" style={{
+          marginBottom: 'var(--space-2xl)',
+          gap: 'var(--space-md)'
+        }}>
           {projects.length === 0 ? (
             <div className="card" style={{
               textAlign: 'center',
-              padding: 'var(--space-3xl)',
+              padding: 'var(--space-xl)',
               maxWidth: '600px',
               margin: '0 auto'
             }}>
@@ -230,18 +285,23 @@ export default function DashboardPage() {
               }}>
                 Start your first memoir project and preserve your precious memories for generations to come.
               </p>
-              <Link to="/projects/create" className="btn btn-primary" style={{ width: '230px' }}>
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="btn btn-primary"
+                style={{ width: '230px' }}
+              >
                 Let's get started
-              </Link>
+              </button>
             </div>
           ) : (
             projects.map((project) => (
               <div
                 key={project.id}
-                className="card"
+                className="card-compact"
                 style={{
                   transition: 'box-shadow var(--transition-fast)',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  boxShadow: 'var(--shadow-sm)'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = 'var(--shadow-lg)'
@@ -250,85 +310,92 @@ export default function DashboardPage() {
                   e.currentTarget.style.boxShadow = 'var(--shadow-sm)'
                 }}
               >
-                {/* Project Header */}
+                {/* Project Header - Mobile stacked */}
                 <div style={{
                   display: 'flex',
-                  alignItems: 'flex-start',
-                  justifyContent: 'space-between',
-                  marginBottom: 'var(--space-lg)',
-                  gap: 'var(--space-lg)'
+                  flexDirection: 'column',
+                  gap: 'var(--space-sm)',
+                  marginBottom: 'var(--space-md)'
                 }}>
-                  <div style={{ flex: 1 }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    justifyContent: 'space-between',
+                    gap: 'var(--space-sm)'
+                  }}>
                     <div style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 'var(--space-md)',
-                      marginBottom: 'var(--space-sm)'
+                      gap: 'var(--space-sm)',
+                      flex: 1
                     }}>
-                      <span style={{ fontSize: '2rem' }}>📖</span>
+                      <span style={{ fontSize: '1.5rem' }}>📖</span>
                       <h3 style={{
-                        fontSize: 'var(--text-h1)',
+                        fontSize: 'var(--text-body-lg)',
                         fontFamily: 'var(--font-serif)',
                         color: 'var(--color-ink)',
-                        marginBottom: 0
+                        marginBottom: 0,
+                        lineHeight: '1.3'
                       }}>
                         {project.title}
                       </h3>
                     </div>
-                    {project.subtitle && (
-                      <p style={{
-                        fontSize: 'var(--text-body)',
-                        color: 'var(--color-slate)',
-                        marginLeft: 'calc(2rem + var(--space-md))',
-                        marginBottom: 0
-                      }}>
-                        {project.subtitle}
-                      </p>
-                    )}
+                    <span style={{
+                      padding: 'var(--space-xs) var(--space-sm)',
+                      backgroundColor: 'rgba(193, 122, 58, 0.1)',
+                      color: 'var(--color-amber-dark)',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: 'var(--text-caption)',
+                      fontWeight: 'var(--font-medium)',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0
+                    }}>
+                      {project.book_type === 'individual_memoir' ? 'Individual' : 'Family'}
+                    </span>
                   </div>
-                  <span style={{
-                    padding: 'var(--space-sm) var(--space-md)',
-                    backgroundColor: 'rgba(193, 122, 58, 0.1)',
-                    color: 'var(--color-amber-dark)',
-                    borderRadius: 'var(--radius-md)',
-                    fontSize: 'var(--text-body-sm)',
-                    fontWeight: 'var(--font-medium)',
-                    whiteSpace: 'nowrap'
-                  }}>
-                    {project.book_type === 'individual_memoir' ? 'Individual' : 'Family'}
-                  </span>
+                  {project.subtitle && (
+                    <p style={{
+                      fontSize: 'var(--text-body-sm)',
+                      color: 'var(--color-slate)',
+                      marginLeft: 'calc(1.5rem + var(--space-sm))',
+                      marginBottom: 0,
+                      lineHeight: '1.4'
+                    }}>
+                      {project.subtitle}
+                    </p>
+                  )}
                 </div>
 
-                {/* Project Details */}
+                {/* Project Details - Simplified for mobile */}
                 <div style={{
-                  marginLeft: 'calc(2rem + var(--space-md))',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 'var(--space-md)'
+                  gap: 'var(--space-sm)'
                 }}>
-                  {/* Progress Bar */}
+                  {/* Progress Bar - Compact */}
                   <div>
                     <div style={{
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      marginBottom: 'var(--space-sm)'
+                      marginBottom: 'var(--space-xs)'
                     }}>
                       <span style={{
-                        fontSize: 'var(--text-body-sm)',
+                        fontSize: 'var(--text-caption)',
                         fontWeight: 'var(--font-medium)',
                         color: 'var(--color-slate)'
                       }}>
-                        Status: {getStatusLabel(project.status)}
+                        {getStatusLabel(project.status)}
                       </span>
                       <span style={{
-                        fontSize: 'var(--text-body-sm)',
-                        color: 'var(--color-slate)'
+                        fontSize: 'var(--text-caption)',
+                        color: 'var(--color-slate)',
+                        fontWeight: 'var(--font-semibold)'
                       }}>
                         {getProgressPercentage(project)}%
                       </span>
                     </div>
-                    <div className="progress-bar" style={{ height: '8px' }}>
+                    <div className="progress-bar" style={{ height: '6px' }}>
                       <div
                         className="progress-fill"
                         style={{ width: `${getProgressPercentage(project)}%` }}
@@ -336,27 +403,34 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  {/* Metadata */}
+                  {/* Metadata - Hide some on mobile */}
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 'var(--space-md)',
-                    fontSize: 'var(--text-body-sm)',
+                    gap: 'var(--space-sm)',
+                    fontSize: 'var(--text-caption)',
                     color: 'var(--color-slate)',
                     flexWrap: 'wrap'
                   }}>
-                    <span>Target: {project.target_page_count} pages</span>
+                    <span>{project.target_page_count} pages</span>
                     <span>•</span>
                     <span>{project.target_chapter_count} chapters</span>
-                    <span>•</span>
-                    <span>Updated {new Date(project.updated_at).toLocaleDateString()}</span>
+                    <span className="tablet-up">•</span>
+                    <span className="tablet-up">Updated {new Date(project.updated_at).toLocaleDateString()}</span>
                   </div>
 
-                  {/* Action Button */}
-                  <div style={{ paddingTop: 'var(--space-sm)' }}>
+                  {/* Action Button - Full width on mobile */}
+                  <div style={{ paddingTop: 'var(--space-xs)' }}>
                     <Link
-                      to={`/projects/${project.id}`}
-                      className="btn-primary"
+                      to={`/ghostwriter/roadmap/${project.id}`}
+                      className="btn btn-primary"
+                      style={{
+                        width: '100%',
+                        minHeight: '48px',
+                        padding: 'var(--space-sm) var(--space-md)',
+                        fontSize: 'var(--text-body)',
+                        justifyContent: 'center'
+                      }}
                     >
                       Continue Working →
                     </Link>
@@ -366,16 +440,13 @@ export default function DashboardPage() {
             ))
           )}
         </div>
-
-        {/* Create New Project Button */}
-        {projects.length > 0 && (
-          <div style={{ textAlign: 'center' }}>
-            <Link to="/projects/create" className="btn-secondary">
-              + Create New Memoir
-            </Link>
-          </div>
-        )}
       </main>
+
+      {/* Create Project Modal */}
+      <CreateProjectModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </div>
   )
 }

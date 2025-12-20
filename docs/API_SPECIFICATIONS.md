@@ -41,8 +41,8 @@ This document defines conceptual API specifications for the Digital Memoir Platf
 ### 1.2 Base URL
 
 ```
-Production: https://api.memoirs.com/v1
-Staging: https://staging-api.memoirs.com/v1
+Production: https://api.everbound.com/v1
+Staging: https://staging-api.everbound.com/v1
 Development: http://localhost:8000/v1
 ```
 
@@ -390,7 +390,7 @@ Response: 201 Created
   "project_id": "uuid",
   "narrator_id": "uuid",
   "input_type": "voice",
-  "raw_content_url": "https://storage.memoirs.com/audio/uuid.mp3",
+  "raw_content_url": "https://storage.everbound.com/audio/uuid.mp3",
   "status": "processing",
   "created_at": "2025-12-19T18:00:00Z"
 }
@@ -843,8 +843,8 @@ Authorization: Bearer <token>
 Response: 200 OK
 {
   "manuscript_id": "uuid",
-  "pdf_url": "https://storage.memoirs.com/pdfs/uuid.pdf",
-  "cover_pdf_url": "https://storage.memoirs.com/pdfs/uuid-cover.pdf",
+  "pdf_url": "https://storage.everbound.com/pdfs/uuid.pdf",
+  "cover_pdf_url": "https://storage.everbound.com/pdfs/uuid-cover.pdf",
   "generated_at": "2025-12-19T18:20:00Z",
   "expires_at": "2025-12-26T18:20:00Z"
 }
@@ -1012,7 +1012,7 @@ Response: 201 Created
   "id": "uuid",
   "project_id": "uuid",
   "file_type": "photo",
-  "storage_url": "https://storage.memoirs.com/photos/uuid.jpg",
+  "storage_url": "https://storage.everbound.com/photos/uuid.jpg",
   "original_filename": "christmas1985.jpg",
   "file_size": 2457600,
   "metadata": {
@@ -1038,7 +1038,7 @@ Response: 200 OK
     {
       "id": "uuid",
       "file_type": "photo",
-      "storage_url": "https://storage.memoirs.com/photos/uuid.jpg",
+      "storage_url": "https://storage.everbound.com/photos/uuid.jpg",
       "metadata": {
         "caption": "Christmas 1985"
       },

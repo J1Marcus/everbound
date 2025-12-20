@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import LoadingSpinner from '../components/LoadingSpinner'
 import type { Database } from '../types/database.types'
+import { getMockSynthesis } from '../data/mockSynthesisData'
 
 type Chapter = Database['public']['Tables']['chapters']['Row']
 
@@ -29,13 +30,35 @@ export default function ChapterReviewPage() {
         return
       }
 
+      // Try to fetch from database first
       const { data, error: fetchError } = await supabase
         .from('chapters')
         .select('*')
         .eq('id', chapterId)
         .single()
 
-      if (fetchError) throw fetchError
+      if (fetchError) {
+        // If chapter not found, check for mock data
+        const mockSynthesis = getMockSynthesis('origins')
+        if (mockSynthesis && chapterId === 'chapter-1') {
+          // Create a mock chapter object from synthesis data
+          setChapter({
+            id: 'chapter-1',
+            project_id: projectId || '',
+            manuscript_id: null,
+            chapter_number: 1,
+            title: 'Where It All Started',
+            content: mockSynthesis.previewContent,
+            component_ids: [],
+            word_count: mockSynthesis.wordCount,
+            status: 'approved',
+            created_at: mockSynthesis.createdAt,
+            updated_at: mockSynthesis.createdAt
+          } as Chapter)
+          return
+        }
+        throw fetchError
+      }
 
       setChapter(data)
     } catch (err) {
@@ -53,9 +76,11 @@ export default function ChapterReviewPage() {
       setSubmitting(true)
       setError('')
 
+      // @ts-ignore - Database schema type issue
       const { error: updateError } = await supabase
         .from('chapters')
-        .update({ status: 'approved' } as any)
+        // @ts-ignore
+        .update({ status: 'approved' })
         .eq('id', chapter.id)
 
       if (updateError) throw updateError
@@ -81,9 +106,11 @@ export default function ChapterReviewPage() {
 
       // In a real implementation, this would save feedback and trigger regeneration
       // For now, we'll just update the status
+      // @ts-ignore - Database schema type issue
       const { error: updateError } = await supabase
         .from('chapters')
-        .update({ status: 'draft' } as any)
+        // @ts-ignore
+        .update({ status: 'draft' })
         .eq('id', chapter.id)
 
       if (updateError) throw updateError
@@ -106,9 +133,11 @@ export default function ChapterReviewPage() {
 
       // In a real implementation, this would trigger chapter regeneration
       // For now, we'll just update the status
+      // @ts-ignore - Database schema type issue
       const { error: updateError } = await supabase
         .from('chapters')
-        .update({ status: 'draft' } as any)
+        // @ts-ignore
+        .update({ status: 'draft' })
         .eq('id', chapter.id)
 
       if (updateError) throw updateError
@@ -122,8 +151,14 @@ export default function ChapterReviewPage() {
     }
   }
 
-  // Mock quality scores (in real implementation, these would come from the chapter data)
-  const qualityScores = {
+  // Get quality scores from mock data if available, otherwise use defaults
+  const mockSynthesis = getMockSynthesis('origins')
+  const qualityScores = mockSynthesis && chapter?.chapter_number === 1 ? {
+    voice_consistency: mockSynthesis.qualityChecks.voiceConsistency.score,
+    sensory_details: mockSynthesis.qualityChecks.sensoryRichness.score,
+    emotional_depth: mockSynthesis.qualityChecks.emotionalDepth.score,
+    narrative_flow: mockSynthesis.qualityChecks.narrativeFlow.score
+  } : {
     voice_consistency: 0.92,
     sensory_details: 0.88,
     emotional_depth: 0.87,
